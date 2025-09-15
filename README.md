@@ -2,7 +2,7 @@
 
 # 💚 UMC INJE 9th_Android
 
-[UMC MJU 9th를 위한 깃허브 사용법 및 규칙](https://www.notion.so/makeus-challenge/Git-Hub-268b57f4596b812a8868c18715676502?source=copy_link)
+[UMC 9th를 위한 깃허브 사용법 및 규칙](https://www.notion.so/makeus-challenge/Git-Hub-268b57f4596b812a8868c18715676502?source=copy_link)
 
 <br>
 
