@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -29,7 +30,10 @@ class MainActivity : AppCompatActivity() {
         imageViews.mapIndexed { imageIndex, imageView ->
             imageView.setOnClickListener {
                 textViews.mapIndexed { textIndex, textView ->
-                    if(imageIndex == textIndex) textView.setTextColor(colors.get(imageIndex))
+                    if(imageIndex == textIndex) {
+                        textView.setTextColor(colors[imageIndex])
+                        Toast.makeText(this, textView.text, Toast.LENGTH_SHORT).show()
+                    }
                     else textView.setTextColor(Color.BLACK)
                 }
 
