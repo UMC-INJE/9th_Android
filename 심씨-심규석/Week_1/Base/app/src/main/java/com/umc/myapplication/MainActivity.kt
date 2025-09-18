@@ -22,13 +22,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // binding관련 inflater
+        //id등록하는거
+        //리스너 달고 if거는거
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         imageViews = listOf(binding.imageView1, binding.imageView2, binding.imageView3, binding.imageView4, binding.imageView5)
         textViews = listOf(binding.textView1, binding.textView2, binding.textView3, binding.textView4, binding.textView5)
 
         imageViews.mapIndexed { imageIndex, imageView ->
-            imageView.setOnClickListener {
+            imageView.setOnClickListener{
                 textViews.mapIndexed { textIndex, textView ->
                     if(imageIndex == textIndex) {
                         textView.setTextColor(colors[imageIndex])
@@ -36,9 +39,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     else textView.setTextColor(Color.BLACK)
                 }
-
             }
-
         }
     }
 }
