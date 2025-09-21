@@ -3,6 +3,7 @@ package com.umc.myapplication
 import android.graphics.Color
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -25,15 +26,28 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
-        imageViews = listOf(binding.imageView1, binding.imageView2, binding.imageView3, binding.imageView4, binding.imageView5)
-        textViews = listOf(binding.textView1, binding.textView2, binding.textView3, binding.textView4, binding.textView5)
+        imageViews = listOf(
+            binding.imageView1,
+            binding.imageView2,
+            binding.imageView3,
+            binding.imageView4,
+            binding.imageView5
+        )
+        textViews = listOf(
+            binding.textView1,
+            binding.textView2,
+            binding.textView3,
+            binding.textView4,
+            binding.textView5
+        )
 
         imageViews.mapIndexed { imageIndex, imageView ->
             imageView.setOnClickListener {
                 textViews.mapIndexed { textIndex, textView ->
-                    if(imageIndex == textIndex)
+                    if (imageIndex == textIndex) {
                         textView.setTextColor(colors[imageIndex])
-                    else textView.setTextColor(Color.BLACK)
+                        Toast.makeText(this, textView.text, Toast.LENGTH_SHORT).show()
+                    } else textView.setTextColor(Color.BLACK)
                 }
             }
         }
