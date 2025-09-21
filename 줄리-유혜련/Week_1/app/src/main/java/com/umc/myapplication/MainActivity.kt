@@ -1,5 +1,8 @@
 package com.umc.myapplication
 
+import android.graphics.Color
+import android.widget.ImageView
+import android.widget.TextView
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +14,9 @@ import com.umc.myapplication.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var imageViews: List<ImageView>
+    private lateinit var textViews: List<TextView>
+    private val colors = listOf(Color.YELLOW, Color.CYAN, Color.BLUE, Color.GREEN, Color.RED)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,12 +24,18 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 
+        setContentView(binding.root)
+        imageViews = listOf(binding.imageView1, binding.imageView2, binding.imageView3, binding.imageView4, binding.imageView5)
+        textViews = listOf(binding.textView1, binding.textView2, binding.textView3, binding.textView4, binding.textView5)
 
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        imageViews.mapIndexed { imageIndex, imageView ->
+            imageView.setOnClickListener {
+                textViews.mapIndexed { textIndex, textView ->
+                    if(imageIndex == textIndex)
+                        textView.setTextColor(colors[imageIndex])
+                    else textView.setTextColor(Color.BLACK)
+                }
+            }
         }
     }
 }
