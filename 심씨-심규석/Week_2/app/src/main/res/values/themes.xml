@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.MyApplication" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+    <style name="Theme.MyApplication" parent="Base.Theme.MyApplication" />
+    <style name="App.BottomNav.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/white</item> <!-- 인디케이터 색 -->
+        <!-- 필요시 크기/여백/모양도 오버라이드 가능 -->
+        <!-- <item name="android:width">48dp</item> -->
+        <!-- <item name="android:height">28dp</item> -->
+        <!-- <item name="marginHorizontal">8dp</item> -->
+        <!-- <item name="shapeAppearance">@style/ShapeAppearance.Material3.NavigationBarView.ActiveIndicator</item> -->
+    </style>
+</resources>
