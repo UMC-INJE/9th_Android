@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.umc.myapplication.R
+import com.umc.myapplication.databinding.FragmentLockerBinding
 
 class LockerFragment : Fragment() {
     override fun onCreateView(
@@ -13,6 +14,7 @@ class LockerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_locker, container, false)
+        val binding = FragmentLockerBinding.inflate(inflater, container, false)
+        return binding.root
     }
 }

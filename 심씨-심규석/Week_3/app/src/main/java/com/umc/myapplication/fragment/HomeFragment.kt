@@ -39,7 +39,7 @@ class HomeFragment : Fragment() {
         first.title.text = "Lady"
         first.artist.text = "Kenshi Yonezu"
         Glide.with(view)
-            .load(R.drawable.home_song_img1) // 로컬 드로어블로 교체
+            .load(R.drawable.img_album_kenshi1) // 로컬 드로어블로 교체
             .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(R.drawable.ic_home_setting)
             .error(R.drawable.ic_home_setting)
@@ -52,7 +52,7 @@ class HomeFragment : Fragment() {
         second.title.text = "Spinning Globe"
         second.artist.text = "Kenshi Yonezu"
         Glide.with(view)
-            .load(R.drawable.home_song_img2) // 로컬 드로어블로 교체
+            .load(R.drawable.img_album_kenshi2) // 로컬 드로어블로 교체
             .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(R.drawable.ic_home_setting)
             .error(R.drawable.ic_home_setting)
@@ -68,14 +68,14 @@ class HomeFragment : Fragment() {
         todaySecond.artist.text = "Kenshi Yonezu"
         // 첫 번째 아이템 플레이 리스트 이미지 변경
         Glide.with(view)
-            .load(R.drawable.home_song_img1) // 로컬 드로어블로 교체
+            .load(R.drawable.img_album_kenshi1) // 로컬 드로어블로 교체
             .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(R.drawable.ic_home_setting)
             .error(R.drawable.ic_home_setting)
             .into(todayFirst.corverImg)
         // 두 번째 아이템 플레이 리스트 이미지 변경
         Glide.with(view)
-            .load(R.drawable.home_song_img2) // 로컬 드로어블로 교체
+            .load(R.drawable.img_album_kenshi2) // 로컬 드로어블로 교체
             .transition(DrawableTransitionOptions.withCrossFade())
             .placeholder(R.drawable.ic_home_setting)
             .error(R.drawable.ic_home_setting)

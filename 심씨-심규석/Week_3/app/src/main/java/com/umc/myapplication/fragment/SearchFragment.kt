@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.umc.myapplication.R
+import com.umc.myapplication.databinding.FragmentSearchBinding
 
 class SearchFragment : Fragment() {
     override fun onCreateView(
@@ -13,6 +14,7 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        val binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
     }
 }

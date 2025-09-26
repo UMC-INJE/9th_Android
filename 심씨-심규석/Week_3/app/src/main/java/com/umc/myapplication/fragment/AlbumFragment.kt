@@ -31,6 +31,9 @@ class AlbumFragment : Fragment() {
 
         val title = arguments?.getString("title")
         val artist = arguments?.getString("artist")
+
+
+
         binding.title.text = title
         binding.artist.text = artist
         val backButton = binding.backButton

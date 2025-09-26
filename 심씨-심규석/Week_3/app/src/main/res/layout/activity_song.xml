@@ -108,7 +108,7 @@
                 android:id="@+id/songImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/home_song_img2" />
+                app:srcCompat="@drawable/img_album_kenshi2" />
 
         </androidx.cardview.widget.CardView>
 

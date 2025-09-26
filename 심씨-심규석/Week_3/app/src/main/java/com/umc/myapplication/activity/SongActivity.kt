@@ -54,6 +54,4 @@ class SongActivity : AppCompatActivity() {
             insets
         }
     }
-
-
 }
