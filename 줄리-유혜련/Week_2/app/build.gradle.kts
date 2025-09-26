@@ -7,6 +7,10 @@ android {
     namespace = "com.umc.myapplication"
     compileSdk = 36
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.umc.myapplication"
         minSdk = 28
