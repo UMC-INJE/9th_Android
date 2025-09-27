@@ -1,6 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/HomeFragment">
+    <fragment
+        android:id="@+id/HomeFragment"
+        tools:layout="@layout/fragment_home"
+        android:name="com.umc.myapplication.fragment.HomeFragment"
+        android:label="홈">
+    </fragment>
+    <fragment
+        android:id="@+id/SearchFragment"
+        tools:layout="@layout/fragment_search"
+        android:name="com.umc.myapplication.fragment.SearchFragment"
+        android:label="구매하기">
+    </fragment>
+    <fragment
+        android:id="@+id/WishListFragment"
+        tools:layout="@layout/fragment_wish_list"
+        android:name="com.umc.myapplication.fragment.WishListFragment"
+        android:label="위시리스트">
+    </fragment>
+    <fragment
+        android:id="@+id/CartFragment"
+        tools:layout="@layout/fragment_cart"
+        android:name="com.umc.myapplication.fragment.CartFragment"
+        android:label="장바구니">
+    </fragment>
+    <fragment
+        android:id="@+id/ProfileFragment"
+        tools:layout="@layout/fragment_profile"
+        android:name="com.umc.myapplication.fragment.ProfileFragment"
+        android:label="프로필">
+    </fragment>
 </navigation>
