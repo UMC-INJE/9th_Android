@@ -27,8 +27,8 @@
         app:labelVisibilityMode="labeled"
         app:itemRippleColor="@android:color/transparent"
         app:itemActiveIndicatorStyle="@style/ShapeAppearance.Material3.Corner.None"
-        app:itemIconTint="@drawable/nav_item_tint"
-        app:itemTextColor="@drawable/nav_item_tint"
+        app:itemIconTint="@color/nav_item_tint"
+        app:itemTextColor="@color/nav_item_tint"
         app:itemIconSize="29dp"
         app:layout_constraintBottom_toBottomOf="parent"
         />
