@@ -1,25 +1,26 @@
-package com.umc.myapplication
+package com.umc.myapplication.activity
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat.enableEdgeToEdge
 import androidx.core.view.WindowInsetsCompat
-import com.umc.myapplication.databinding.ActivityMainBinding
+import com.umc.myapplication.R
+import com.umc.myapplication.databinding.ActivityEditProfileBinding
 
-class MainActivity : AppCompatActivity() {
+class EditProfileActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+
+    private lateinit var binding: ActivityEditProfileBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityEditProfileBinding.inflate(layoutInflater)
 
 
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
