@@ -25,6 +25,7 @@
         android:padding="12dp">
 
         <include
+            android:id="@+id/exampleItem"
             layout="@layout/view_wish_list_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

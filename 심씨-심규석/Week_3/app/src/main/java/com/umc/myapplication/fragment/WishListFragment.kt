@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.umc.myapplication.R
 import com.umc.myapplication.databinding.FragmentHomeBinding
 import com.umc.myapplication.databinding.FragmentWishListBinding
 
@@ -17,7 +18,7 @@ class WishListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentWishListBinding.inflate(inflater, container, false)
-        
+        binding.exampleItem.image.setImageResource(R.drawable.img_wish_list_air_jordan)
         // Inflate the layout for this fragment
         return binding.root
     }

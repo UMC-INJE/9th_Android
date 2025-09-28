@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/image"
         android:layout_width="184dp"
         android:layout_height="184dp"
         tools:srcCompat="@drawable/img_wish_list_air_jordan" />
