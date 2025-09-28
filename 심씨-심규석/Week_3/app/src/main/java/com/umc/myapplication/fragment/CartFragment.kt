@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import com.umc.myapplication.R
 import com.umc.myapplication.databinding.FragmentCartBinding
 
 class CartFragment : Fragment() {
@@ -23,7 +25,10 @@ class CartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val orderButton = binding.orderButton
+        orderButton.setOnClickListener {
+            it.findNavController().navigate(R.id.action_CartFragment_to_SearchFragment)
+        }
     }
 
     override fun onDestroy() {

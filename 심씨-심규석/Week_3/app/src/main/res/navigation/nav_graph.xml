@@ -27,6 +27,9 @@
         tools:layout="@layout/fragment_cart"
         android:name="com.umc.myapplication.fragment.CartFragment"
         android:label="장바구니">
+        <action
+            android:id="@+id/action_CartFragment_to_SearchFragment"
+            app:destination="@id/SearchFragment" />
     </fragment>
     <fragment
         android:id="@+id/ProfileFragment"
