@@ -19,6 +19,7 @@ class WishListFragment : Fragment() {
     ): View? {
         _binding = FragmentWishListBinding.inflate(inflater, container, false)
         binding.exampleItem.image.setImageResource(R.drawable.img_wish_list_air_jordan)
+        
         // Inflate the layout for this fragment
         return binding.root
     }
