@@ -11,6 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.navigation.NavigationBarView
 import com.umc.myapplication.databinding.ActivityMainBinding
 
+import com.umc.myapplication.fragment.HomeFragment
+import com.umc.myapplication.fragment.LookFragment
+import com.umc.myapplication.fragment.SearchFragment
+import com.umc.myapplication.fragment.LockerFragment
+import com.umc.myapplication.fragment.AlbumFragment
+
 class MainActivity : AppCompatActivity() {
 
     companion object{

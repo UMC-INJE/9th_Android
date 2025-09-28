@@ -32,7 +32,7 @@
         android:textStyle="bold"
         android:maxLines="1"
         android:textColor="@color/black"
-        android:text="testTitle"
+        android:text="Lost cornor"
         />
 
     <TextView
@@ -41,6 +41,6 @@
         android:layout_height="wrap_content"
         android:maxLines="1"
         android:textColor="@color/black"
-        android:text="testSinger"
+        android:text="Kenshi Yonezu"
         />
 </LinearLayout>

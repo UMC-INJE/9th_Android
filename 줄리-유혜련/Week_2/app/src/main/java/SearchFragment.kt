@@ -1,4 +1,4 @@
-package com.umc.myapplication
+package com.umc.myapplication.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
