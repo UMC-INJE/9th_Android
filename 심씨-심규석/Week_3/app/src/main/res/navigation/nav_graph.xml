@@ -9,6 +9,10 @@
         tools:layout="@layout/fragment_home"
         android:name="com.umc.myapplication.fragment.HomeFragment"
         android:label="홈">
+
+        <action
+            android:id="@+id/action_HomeFragment_to_BannerDetailFragment"
+            app:destination="@id/BannerDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/SearchFragment"
@@ -36,5 +40,23 @@
         tools:layout="@layout/fragment_profile"
         android:name="com.umc.myapplication.fragment.ProfileFragment"
         android:label="프로필">
+    </fragment>
+    <fragment
+        android:id="@+id/BannerDetailFragment"
+        tools:layout="@layout/fragment_banner_detail"
+        android:name="com.umc.myapplication.fragment.BannerDetailFragment"
+        android:label="배너 디테일">
+        <argument android:name="resId" app:argType="reference" />
+        <argument android:name="title" app:argType="string" />
+        <argument android:name="description" app:argType="string" />
+        <action
+            android:id="@+id/action_BannerDetailFragment_to_HomeFragment"
+            app:destination="@id/HomeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/HomeBannerFragment"
+        tools:layout="@layout/fragment_home_banner"
+        android:name="com.umc.myapplication.fragment.HomeBannerFragment"
+        android:label="배너 디테일">
     </fragment>
 </navigation>
