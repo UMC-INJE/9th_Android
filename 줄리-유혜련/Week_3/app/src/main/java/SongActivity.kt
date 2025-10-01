@@ -2,6 +2,7 @@ package com.umc.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.umc.myapplication.databinding.ActivitySongBinding
 
@@ -24,6 +25,22 @@ class SongActivity : AppCompatActivity() {
             }
             setResult(RESULT_OK, resultIntent)
             finish()
+        }
+
+        binding.songMiniplayerIv.setOnClickListener {
+            setPlayerStatus(false)
+        }
+        binding.songPauseIv.setOnClickListener {
+            setPlayerStatus(true)
+        }
+    }
+    fun setPlayerStatus(isPlaying: Boolean) {
+        if (isPlaying) {
+            binding.songMiniplayerIv.visibility = View.VISIBLE
+            binding.songPauseIv.visibility = View.GONE
+        } else {
+            binding.songMiniplayerIv.visibility = View.GONE
+            binding.songPauseIv.visibility = View.VISIBLE
         }
     }
 }
