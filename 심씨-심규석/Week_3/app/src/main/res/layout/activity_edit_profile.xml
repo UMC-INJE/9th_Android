@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/shape_bg_input_group"
+            android:background="@drawable/shape_bg_view_group_8dp"
             >
 
             <com.google.android.material.textfield.TextInputLayout

@@ -19,6 +19,13 @@
         tools:layout="@layout/fragment_search"
         android:name="com.umc.myapplication.fragment.SearchFragment"
         android:label="구매하기">
+        <argument
+            android:name="isWishList"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <action
+            android:id="@+id/action_SearchFragment_to_ProductDetailFragment"
+            app:destination="@id/ProductDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/WishListFragment"
@@ -54,9 +61,20 @@
             app:destination="@id/HomeFragment" />
     </fragment>
     <fragment
-        android:id="@+id/HomeBannerFragment"
-        tools:layout="@layout/fragment_home_banner"
-        android:name="com.umc.myapplication.fragment.HomeBannerFragment"
-        android:label="배너 디테일">
+        android:id="@+id/ProductDetailFragment"
+        tools:layout="@layout/fragment_product_detail"
+        android:name="com.umc.myapplication.fragment.ProductDetailFragment"
+        android:label="ProductDetailFragment" >
+        <argument
+            android:name="productId"
+            app:argType="integer" />
+        <argument
+        android:name="isWishList"
+        app:argType="boolean"
+        android:defaultValue="false" />
+
+        <action
+            android:id="@+id/action_ProductDetailFragment_to_SearchFragment"
+            app:destination="@id/SearchFragment" />
     </fragment>
 </navigation>

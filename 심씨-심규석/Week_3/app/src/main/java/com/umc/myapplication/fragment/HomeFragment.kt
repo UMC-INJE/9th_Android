@@ -22,8 +22,6 @@ class HomeFragment : Fragment() {
             title = "Soyeon’s Dance \n" +
                     "Challenge \uD83D\uDE0E",
             description ="Hip hop dancer Soyeon Jang shows us an epic dance challenge in the latest Playlist episode. Soyeon dances three parts of the routine - first fast, then slow. Then she combines all the moves for an awesome dance party with her buddy, Disco Dancer. Kids will get inspired to dance along and make up a dance routine of their own."),
-
-
         homeBanner(R.drawable.img_home_banner3,
             title = "One-Hand Focus \uD83C\uDFC0",
             description ="A clean monochrome fit sets the stage for a pregame balance drill—start with stance, lock the wrist, then bring the gaze forward, first fast, then slow, then combine for a steady release pose. Kids can try the one-hand hold, refine posture, and craft a personal warm-up snapshot that shows calm control before tip-off."),
