@@ -1,99 +1,51 @@
 package com.umc.myapplication.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.umc.myapplication.R
+import com.umc.myapplication.adapter.BannerPagerAdapter
 import com.umc.myapplication.databinding.FragmentHomeBinding
+import com.umc.myapplication.model.homeBanner
 
 class HomeFragment : Fragment() {
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    private val bannerList = arrayListOf(
+        homeBanner(resId = R.drawable.img_home_banner1,
+            title = "Bench Squad Vibe \uD83D\uDE0E",
+            description = "Hip-hop energy meets game-day calm as two teammates break down a simple courtside routine from the bench—first fast, then slow, then all together for a confident duo pose. Kids can pair up, match seats and footwork, and finish with a synchronized ball hand-off to create a mini bench-shot challenge of their own."),
+        homeBanner(R.drawable.img_home_banner2,
+            title = "Soyeon’s Dance \n" +
+                    "Challenge \uD83D\uDE0E",
+            description ="Hip hop dancer Soyeon Jang shows us an epic dance challenge in the latest Playlist episode. Soyeon dances three parts of the routine - first fast, then slow. Then she combines all the moves for an awesome dance party with her buddy, Disco Dancer. Kids will get inspired to dance along and make up a dance routine of their own."),
+        homeBanner(R.drawable.img_home_banner3,
+            title = "One-Hand Focus \uD83C\uDFC0",
+            description ="A clean monochrome fit sets the stage for a pregame balance drill—start with stance, lock the wrist, then bring the gaze forward, first fast, then slow, then combine for a steady release pose. Kids can try the one-hand hold, refine posture, and craft a personal warm-up snapshot that shows calm control before tip-off."),
+    )
+    private val bannerFragmentList = bannerList.map {
+        HomeBannerFragment.newInstance(it)
+    }
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        binding.viewPager.adapter = BannerPagerAdapter(this, bannerFragmentList)
+
+        // Inflate the layout for this fragment
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        Log.i("fragment", "onViewCreated: create")
-
-        // 상단 타이틀/정보
-        binding.homeTitle.text = "달밤의 감성 산책"
-        binding.totalSong.text = "총 10곡 2025.03.30"
 
 
-        // 첫 번째 아이템
-        val first = binding.songFirItem  // include @+id/songFirItem에 대응하는 바인딩
-        first.title.text = "Lady"
-        first.artist.text = "Kenshi Yonezu"
-        Glide.with(view)
-            .load(R.drawable.home_song_img1) // 로컬 드로어블로 교체
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .placeholder(R.drawable.ic_home_setting)
-            .error(R.drawable.ic_home_setting)
-            .into(first.corverImg)
-
-
-
-        // 두 번째 아이템 플레이 리스트
-        val second = binding.songSecItem // include @+id/songSecItem
-        second.title.text = "Spinning Globe"
-        second.artist.text = "Kenshi Yonezu"
-        Glide.with(view)
-            .load(R.drawable.home_song_img2) // 로컬 드로어블로 교체
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .placeholder(R.drawable.ic_home_setting)
-            .error(R.drawable.ic_home_setting)
-            .into(second.corverImg)
-
-        val todayFirst = binding.todaySong1
-        val todaySecond = binding.todaySong2
-
-        todayFirst.title.text = "Lady"
-        todayFirst.artist.text = "Kenshi Yonezu"
-
-        todaySecond.title.text = "Spinning Globe"
-        todaySecond.artist.text = "Kenshi Yonezu"
-        // 첫 번째 아이템 플레이 리스트 이미지 변경
-        Glide.with(view)
-            .load(R.drawable.home_song_img1) // 로컬 드로어블로 교체
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .placeholder(R.drawable.ic_home_setting)
-            .error(R.drawable.ic_home_setting)
-            .into(todayFirst.corverImg)
-        // 두 번째 아이템 플레이 리스트 이미지 변경
-        Glide.with(view)
-            .load(R.drawable.home_song_img2) // 로컬 드로어블로 교체
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .placeholder(R.drawable.ic_home_setting)
-            .error(R.drawable.ic_home_setting)
-            .into(todaySecond.corverImg)
-
-        todayFirst.root.setOnClickListener {
-            val sendData = Bundle().also {
-                it.putString("title", todayFirst.title.text.toString())
-                it.putString("artist", todayFirst.artist.text.toString())
-            }
-            findNavController().navigate(R.id.albumFragment,sendData )
-        }
-
-
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
         _binding = null
     }
+
 }

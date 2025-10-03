@@ -4,11 +4,52 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/textView9"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="search"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabTextColor="@color/gray600"
+        app:tabSelectedTextColor="@color/black"
+        app:tabMode="scrollable"
+    >
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tops &amp; T-Shirts"
+            />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shoes" />
+    </com.google.android.material.tabs.TabLayout>
+
+
+
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/grid"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:useDefaultMargins="false"
+        app:alignmentMode="alignMargins"
+        app:columnCount="2"
+        app:layout_constraintTop_toBottomOf="@id/tab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="12dp"
+        app:rowCount="1">
+        
+
+    </androidx.gridlayout.widget.GridLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
