@@ -5,15 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.viewpager2.widget.ViewPager2
 import com.umc.myapplication.R
 import com.umc.myapplication.adapter.BannerPagerAdapter
 import com.umc.myapplication.databinding.FragmentHomeBinding
 import com.umc.myapplication.model.homeBanner
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    private val intervalMs = 3000L
+
+    @Volatile private var isUserDragging = false
     private val bannerList = arrayListOf(
         homeBanner(resId = R.drawable.img_home_banner1,
             title = "Bench Squad Vibe \uD83D\uDE0E",
@@ -37,15 +48,59 @@ class HomeFragment : Fragment() {
 
         binding.viewPager.adapter = BannerPagerAdapter(this, bannerFragmentList)
 
+        binding.viewPager.adapter = BannerPagerAdapter(this, bannerFragmentList)
+
         // Inflate the layout for this fragment
         return binding.root
     }
-
-
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
+
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.viewPager.registerOnPageChangeCallback(pageCallback)
+
+        // 화면이 STARTED 이상일 때 자동 스크롤 루프 시작, STOPPED 아래로 내려가면 자동 취소
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    autoScrollLoop()
+                }
+            }
+        }
+
+    }
+    private suspend fun autoScrollLoop() {
+        while (true) {
+            delay(intervalMs)
+            if (isUserDragging) continue
+            val adapter = binding.viewPager.adapter ?: continue
+            val count = adapter.itemCount
+            if (count <= 1) continue
+            val next = (binding.viewPager.currentItem + 1) % count
+            binding.viewPager.setCurrentItem(next, true)
+        }
+    }
+    private val pageCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageScrollStateChanged(state: Int) {
+            when (state) {
+                ViewPager2.SCROLL_STATE_DRAGGING ->
+                    isUserDragging = true
+                ViewPager2.SCROLL_STATE_IDLE ->
+                    isUserDragging = false
+            }
+        }
+    }
+    override fun onDestroyView() {
+        binding.viewPager.unregisterOnPageChangeCallback(pageCallback)
+        _binding = null
+        super.onDestroyView()
+    }
+
 
 }
