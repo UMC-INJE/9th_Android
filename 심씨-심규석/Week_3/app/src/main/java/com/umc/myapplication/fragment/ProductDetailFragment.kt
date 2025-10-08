@@ -1,5 +1,6 @@
 package com.umc.myapplication.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,37 +10,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.umc.myapplication.R
 import com.umc.myapplication.databinding.FragmentProductDetailBinding
-import com.umc.myapplication.model.ProductDetail
+import com.umc.myapplication.testData.testProductRepository
 
 class ProductDetailFragment : Fragment() {
 
     private var _binding: FragmentProductDetailBinding? = null
     private val binding get() = _binding!!
     private val args: ProductDetailFragmentArgs by navArgs()
-    private val productList = listOf<ProductDetail>(
-        ProductDetail(
-            productId = 1,
-            resId = R.drawable.img_search_item1,
-            name ="Nike Everyday Plus Cushioned",
-            isWishList = true,
-            description = "The Nike Everyday Plus Cushioned Socks bring comfort to your workout with extra cushioning under the heel and forefoot and a snug, supportive arch band. Sweat-wicking power and breathability up top help keep your feet dry and cool to help push you through that extra set.",
-            price = 10,
-            category = "Training Crew Socks",
-            options = listOf(
-                "Shown: Multi-Color",
-                "Style: SX6897-965"),
-            ),
-        ProductDetail(
-            productId = 2,
-            resId = R.drawable.img_search_item1,
-            name ="Nike Everyday Plus Cdddushioned",
-            isWishList = false,
-            description = "Training Ankle Sockds (6 Pairs)",
-            price = 300,
-            category = "",
-            options = listOf(),
-            ),
-    )
+    private val productList = testProductRepository.products
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

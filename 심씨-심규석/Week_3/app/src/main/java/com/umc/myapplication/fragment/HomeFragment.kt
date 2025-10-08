@@ -8,14 +8,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.umc.myapplication.R
 import com.umc.myapplication.adapter.BannerPagerAdapter
+import com.umc.myapplication.adapter.HomeNewProductAdapter
 import com.umc.myapplication.databinding.FragmentHomeBinding
 import com.umc.myapplication.model.homeBanner
-import kotlinx.coroutines.Job
+import com.umc.myapplication.testData.testProductRepository
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -40,15 +42,27 @@ class HomeFragment : Fragment() {
     private val bannerFragmentList = bannerList.map {
         HomeBannerFragment.newInstance(it)
     }
+    private val newProductList = testProductRepository.products.subList(2,4)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-
         binding.viewPager.adapter = BannerPagerAdapter(this, bannerFragmentList)
 
-        binding.viewPager.adapter = BannerPagerAdapter(this, bannerFragmentList)
+        binding.recyclerView.adapter = HomeNewProductAdapter(
+            newProductList,
+            onItemclick = {
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
+                    isWishList = it.isWishList,
+                    productId = it.productId
+                )
+                findNavController().navigate(action)
+            }
+        )
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false) // ← 이 줄[web:22][web:21]
+
 
         // Inflate the layout for this fragment
         return binding.root
