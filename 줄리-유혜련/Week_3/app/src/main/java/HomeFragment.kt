@@ -58,6 +58,17 @@ class HomeFragment : Fragment() {
                     .addToBackStack(null)
                     .commitAllowingStateLoss()
             }
+
+            override fun onPlayClick(item: Album) {
+                val first = item.songs.firstOrNull()
+                val titleForMini = first?.title ?: item.title
+                val artistForMini = first?.singer ?: item.singer
+
+                (requireActivity() as MainActivity).updateMiniPlayer(
+                    title = titleForMini,
+                    artist = artistForMini,
+                )
+            }
         })
 
         val bannerAdapter = BannerVPAdapter(this)

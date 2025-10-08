@@ -9,7 +9,10 @@ class AlbumRVAdapter(
     private val albumList: List<Album>
 ) : RecyclerView.Adapter<AlbumRVAdapter.ViewHolder>() {
 
-    interface MyItemClickListener { fun onItemClick(item: Album) }
+    interface MyItemClickListener {
+        fun onItemClick(item: Album) // 카드 전체 클릭
+        fun onPlayClick(item: Album) // Play 버튼 클릭
+    }
     private var myItemClickListener: MyItemClickListener? = null
     fun setMyItemClickListener(l: MyItemClickListener) { myItemClickListener = l }
 
@@ -31,10 +34,16 @@ class AlbumRVAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Album, listener: MyItemClickListener?) {
-            binding.itemAlbumTitleTv.text = item.title
-            binding.itemAlbumSingerTv.text = item.singer
-            binding.itemAlbumCoverImgIv.setImageResource(item.coverImg)
+            binding.itemAlbumTitle.text = item.title
+            binding.itemAlbumSinger.text = item.singer
+            binding.itemAlbumCoverImg.setImageResource(item.coverImg)
+
+            // 전체 카드 클릭 → 앨범 화면 이동
             binding.root.setOnClickListener { listener?.onItemClick(item) }
+            // play 버튼 클릭 → 미니플레이어 업데이트
+            binding.itemAlbumPlayImg.setOnClickListener {
+                listener?.onPlayClick(item)
+            }
         }
     }
 }

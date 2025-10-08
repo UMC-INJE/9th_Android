@@ -3,6 +3,7 @@ package com.umc.myapplication
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         val song = Song(binding.miniSongTitleTv.text.toString(),binding.miniSongArtistTv.text.toString())
 
+        // mini player 클릭 → SongActivity 이동
         binding.mainPlayerCl.setOnClickListener {
             //startActivity(Intent(this, SongActivity::class.java))
             val intent = Intent(this,SongActivity::class.java)
@@ -77,5 +79,12 @@ class MainActivity : AppCompatActivity() {
             .commit()
 
         true
+    }
+
+    fun updateMiniPlayer(title: String, artist: String) {
+        // 미니플레이어 표시 및 업데이트
+        binding.mainPlayerCl.visibility = View.VISIBLE
+        binding.miniSongTitleTv.text = title
+        binding.miniSongArtistTv.text = artist
     }
 }
