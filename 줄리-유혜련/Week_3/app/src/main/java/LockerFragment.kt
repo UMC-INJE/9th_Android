@@ -24,7 +24,6 @@ class LockerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val information = arrayListOf("수록곡", "상세정보", "영상")
 
         // 1) 어댑터 연결
         val lockerAdapter = LockorVPAdapter(this)

@@ -43,7 +43,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val song = Song(binding.miniSongTitleTv.text.toString(),binding.miniSongArtistTv.text.toString())
+        val song = Song(
+            id = 1,
+            title = binding.miniSongTitleTv.text.toString(),
+            singer = binding.miniSongArtistTv.text.toString(),
+            coverImg = R.drawable.img_album_exp2
+        )
 
         // mini player 클릭 → SongActivity 이동
         binding.mainPlayerCl.setOnClickListener {
