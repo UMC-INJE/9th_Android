@@ -50,7 +50,6 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.gridlayout)
-    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
