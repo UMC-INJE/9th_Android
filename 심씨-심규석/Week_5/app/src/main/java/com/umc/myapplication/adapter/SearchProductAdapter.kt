@@ -8,6 +8,7 @@ import com.umc.myapplication.R
 import com.umc.myapplication.databinding.ViewItemNewProductBinding
 import com.umc.myapplication.databinding.ViewItemProductBinding
 import com.umc.myapplication.model.Product
+import com.umc.myapplication.utils.setWishIcon
 
 class SearchProductAdapter(var newProductList: List<Product>, val onItemclick: (Product) -> Unit) : RecyclerView.Adapter<SearchProductAdapter.ViewHolder>() {
     inner class ViewHolder (val binding : ViewItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -18,13 +19,13 @@ class SearchProductAdapter(var newProductList: List<Product>, val onItemclick: (
             binding.price.text = "US$${data.price}"
             binding.description.text = data.shortDescription
             binding.colors.text = "${data.colors}Colors"
-            binding.isWishListIcon.setImageResource(if (data.isWishList) R.drawable.ic_red_heart else R.drawable.ic_bnv_wish_list)
+            binding.isWishListIcon.setWishIcon(isWish = data.isWishList)
             binding.root.setOnClickListener {
                 onItemclick(data)
             }
             binding.wishListButton.setOnClickListener {
                 data.isWishList = !data.isWishList
-                binding.isWishListIcon.setImageResource(if (data.isWishList) R.drawable.ic_red_heart else R.drawable.ic_bnv_wish_list)
+                binding.isWishListIcon.setWishIcon(isWish = data.isWishList)
             }
         }
 

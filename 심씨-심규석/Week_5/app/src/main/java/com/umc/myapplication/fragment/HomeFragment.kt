@@ -54,7 +54,7 @@ class HomeFragment : Fragment() {
             newProductList,
             onItemclick = {
                 val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
-                    isWishList = it.isWishList,
+
                     productId = it.productId
                 )
                 findNavController().navigate(action)

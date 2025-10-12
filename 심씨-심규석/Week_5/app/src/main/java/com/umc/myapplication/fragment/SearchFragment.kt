@@ -15,6 +15,7 @@ import com.umc.myapplication.adapter.SearchProductAdapter
 import com.umc.myapplication.databinding.FragmentSearchBinding
 import com.umc.myapplication.databinding.ViewItemProductBinding
 import com.umc.myapplication.testData.testProductRepository
+import com.umc.myapplication.utils.setWishIcon
 
 class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
@@ -40,9 +41,7 @@ class SearchFragment : Fragment() {
             itemBinding.description.text = item.shortDescription
             itemBinding.colors.text = "${item.colors}Colors"
             itemBinding.price.text = "US$${item.price}"
-            isWishIcon.setImageResource(
-                if (item.isWishList) R.drawable.ic_red_heart
-                else R.drawable.ic_bnv_wish_list)
+            isWishIcon.setWishIcon(isWish = item.isWishList)
 
             //grid설정
             val lp = (itemBinding.root.layoutParams as GridLayout.LayoutParams).apply {
@@ -57,7 +56,6 @@ class SearchFragment : Fragment() {
             itemBinding.root.setOnClickListener {
                 val action = SearchFragmentDirections
                     .actionSearchFragmentToProductDetailFragment(
-                        isWishList = item.isWishList,
                         productId = item.productId // 필요 시
                     )
                 findNavController().navigate(action)
@@ -86,7 +84,6 @@ class SearchFragment : Fragment() {
         binding.recycler.adapter = SearchProductAdapter(searchList) {
             val action = SearchFragmentDirections
                 .actionSearchFragmentToProductDetailFragment(
-                    isWishList = it.isWishList,
                     productId = it.productId
                 )
             findNavController().navigate(action)
@@ -102,8 +99,8 @@ class SearchFragment : Fragment() {
     }
 
     fun updateProductWishUi(iconView : ImageView, productId: Int, isWishList: Boolean) {
-        searchList.get(productId - 1).isWishList = isWishList
-        iconView.setImageResource(if (isWishList) R.drawable.ic_red_heart else R.drawable.ic_bnv_wish_list)
+        searchList[productId - 1].isWishList = isWishList
+        iconView.setWishIcon(isWish = isWishList)
     }
 
 }

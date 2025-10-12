@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.umc.myapplication.R
 import com.umc.myapplication.databinding.FragmentProductDetailBinding
 import com.umc.myapplication.testData.testProductRepository
+import com.umc.myapplication.utils.setWishIcon
 
 class ProductDetailFragment : Fragment() {
 
@@ -25,11 +26,11 @@ class ProductDetailFragment : Fragment() {
     ): View? {
 
         _binding = FragmentProductDetailBinding.inflate(inflater, container, false)
-        val passedIsWish = args.isWishList
+
         val passedProductId = args.productId
         val item = productList.firstOrNull { it.productId == passedProductId }
             ?: productList.first()
-        item.isWishList = passedIsWish
+
         binding.headerTitle.text = item.name
         binding.resId.setImageResource(item.resId)
         binding.category.text = item.category
@@ -37,15 +38,11 @@ class ProductDetailFragment : Fragment() {
         binding.price.text = "US$${item.price}"
         binding.description.text = item.description
         binding.options.text = item.options.joinToString("\n") { "●$it" }
-        binding.wishListIcon.setImageResource(
-            if (item.isWishList) R.drawable.ic_red_heart
-            else R.drawable.ic_bnv_wish_list)
+        binding.wishListIcon.setWishIcon(isWish = item.isWishList)
         binding.wishListButton.setOnClickListener { view ->
             val isWishList = !item.isWishList
             item.isWishList = isWishList
-            binding.wishListIcon.setImageResource(
-                if (isWishList) R.drawable.ic_red_heart
-                else R.drawable.ic_bnv_wish_list)
+            binding.wishListIcon.setWishIcon(isWish = item.isWishList)
         }
         binding.backButton.setOnClickListener {
             findNavController().previousBackStackEntry

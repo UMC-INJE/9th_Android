@@ -28,7 +28,6 @@ class WishListFragment : Fragment() {
         binding.recycler.adapter = WishListProductAdapter(list) {
             val action = WishListFragmentDirections
                 .actionWishListFragmentToProductDetailFragment(
-                    isWishList = it.isWishList,
                     productId = it.productId
                 )
             findNavController().navigate(action)
