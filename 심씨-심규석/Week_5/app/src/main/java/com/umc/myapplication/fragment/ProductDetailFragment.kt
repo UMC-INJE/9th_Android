@@ -50,6 +50,13 @@ class ProductDetailFragment : Fragment() {
                 ?.set("isWishList_result_${item.productId}", item.isWishList)
             findNavController().popBackStack()
         }
+        binding.addCartButton.setOnClickListener {
+            val action = ProductDetailFragmentDirections.actionProductDetailFragmentToCartFragment(
+                productId = item.productId
+            )
+            findNavController().navigate(action)
+        }
+
         // Inflate the layout for this fragment
         return binding.root
     }
