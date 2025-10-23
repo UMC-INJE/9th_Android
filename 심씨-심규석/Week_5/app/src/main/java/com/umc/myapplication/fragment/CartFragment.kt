@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.umc.myapplication.databinding.FragmentCartBinding
 import com.umc.myapplication.testData.testProductRepository
 import com.umc.myapplication.utils.setTextWithUnderline
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.getValue
 
 class CartFragment : Fragment() {
@@ -35,6 +39,7 @@ class CartFragment : Fragment() {
             navigator = { directions ->
                 view.findNavController().navigate(directions)
             },
+            coroutineScope = viewLifecycleOwner.lifecycleScope
         )
         ctx.setProductId(args.productId)
 
@@ -64,28 +69,36 @@ class FilledState(private val productId: Int) : CartState {
         binding.cartFill.root.visibility = View.VISIBLE
 
         binding.cartFill.name.text = product.name
-        binding.cartFill.description.text = product.description
-        binding.cartFill.price.text = "US$${product.price}"
+        binding.cartFill.description.text = product.shortDescription
         binding.cartFill.imageView.setImageResource(product.resId)
         binding.cartFill.count.text = "1"
         binding.cartFill.delebery.setTextWithUnderline(
             base = "Arrives Wed, 11May\nto Fri, 13 May",
             underlined = "Edit Location"
         )
+        binding.cartFill.productPrice.text = "US$${product.price}"
+        binding.cartFill.price.text = "US$${product.price} + Tax"
+        binding.cartFill.deliveryFee.text = "Standard - Free"
+
         binding.cartFill.promotion.setOnClickListener {  }
 
 
     }
     override fun onOrderClick(ctx: CartContext) {
-        // 주문 버튼: 장바구니 비우기 등 비즈니스 로직
-        ctx.clearCart()
-        ctx.setState(EmptyState())
+        ctx.coroutineScope.launch {
+            ctx.showLoading()
+            delay(2000)
+            ctx.clearCart()
+            ctx.hideLoading()
+        }
+
     }
 }
 
 class CartContext(
     private val binding: FragmentCartBinding,
     private val navigator: (NavDirections) -> Unit,
+    val coroutineScope: LifecycleCoroutineScope,
 ) {
     private var state: CartState = EmptyState()
     private var currentProductId : Int? = null
@@ -104,6 +117,12 @@ class CartContext(
         }
     }
     // 도우미: 상태들이 호출할 액션
+    fun showLoading() {
+        binding.loadingOverlay.root.visibility = View.VISIBLE
+    }
+    fun hideLoading() {
+        binding.loadingOverlay.root.visibility = View.GONE
+    }
     //상품 있을 시 지우고 상태 업뎃
     fun clearCart() {
         currentProductId = -1
