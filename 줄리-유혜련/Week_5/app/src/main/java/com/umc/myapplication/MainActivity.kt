@@ -3,6 +3,7 @@ package com.umc.myapplication
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -19,16 +20,19 @@ import com.umc.myapplication.fragment.LockerFragment
 import com.umc.myapplication.fragment.AlbumFragment
 
 class MainActivity : AppCompatActivity() {
-
     companion object{
         const val RESULT_ALBUM_TITLE = "result_album_title"
     }
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var songResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+//        setTheme(R.style.Theme_FLO)
+        Thread.sleep(3000)
+
         super.onCreate(savedInstanceState)
+        
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -53,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         // mini player 클릭 → SongActivity 이동
         binding.mainPlayerCl.setOnClickListener {
             //startActivity(Intent(this, SongActivity::class.java))
-            val intent = Intent(this,SongActivity::class.java)
+            val intent = Intent(this, SongActivity::class.java)
             intent.putExtra("title", song.title)
             intent.putExtra("singer", song.singer)
             songResultLauncher.launch(intent)
