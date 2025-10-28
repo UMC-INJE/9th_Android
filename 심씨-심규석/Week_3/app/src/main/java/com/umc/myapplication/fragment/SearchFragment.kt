@@ -9,18 +9,33 @@ import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.gridlayout.widget.GridLayout
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import com.umc.myapplication.R
-import com.umc.myapplication.adapter.SearchProductAdapter
 import com.umc.myapplication.databinding.FragmentSearchBinding
 import com.umc.myapplication.databinding.ViewItemProductBinding
-import com.umc.myapplication.testData.testProductRepository
+import com.umc.myapplication.model.SearchItem
 
 class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    val searchList = testProductRepository.products
+    val searchList = listOf<SearchItem>(
+        SearchItem(
+            productId = 1,
+            resId = R.drawable.img_search_item1,
+            name ="Nike Everyday Plus Cushioned",
+            isWishList = true,
+            description = "Training Ankle Socks (6 Pairs)",
+            colors = 5,
+            price = 10),
+        SearchItem(
+            productId = 2,
+            resId = R.drawable.img_search_item1,
+            name ="Nike Everyday Plus Cdddushioned",
+            isWishList = false,
+            description = "Training Ankle Sockds (6 Pairs)",
+            colors = 200,
+            price = 300),
+    )
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -30,14 +45,14 @@ class SearchFragment : Fragment() {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         //searchList만큼 item생성 -> api로 변경할 예정
-        searchList.mapIndexed { index, item ->
+        searchList.mapIndexedNotNull { index, item ->
             val itemBinding = ViewItemProductBinding.inflate(layoutInflater, binding.grid, false)
             val isWishIcon = itemBinding.isWishListIcon
 
             //속성 전달
-            itemBinding.resId.setImageResource(item.resId)
+            itemBinding.image.setImageResource(item.resId)
             itemBinding.title.text = item.name
-            itemBinding.description.text = item.shortDescription
+            itemBinding.description.text = item.description
             itemBinding.colors.text = "${item.colors}Colors"
             itemBinding.price.text = "US$${item.price}"
             isWishIcon.setImageResource(
@@ -83,15 +98,6 @@ class SearchFragment : Fragment() {
             binding.grid.addView(itemBinding.root)
         }
 
-        binding.recycler.adapter = SearchProductAdapter(searchList) {
-            val action = SearchFragmentDirections
-                .actionSearchFragmentToProductDetailFragment(
-                    isWishList = it.isWishList,
-                    productId = it.productId
-                )
-            findNavController().navigate(action)
-        }
-        binding.recycler.layoutManager = GridLayoutManager(context, 2)
         // Inflate the layout for this fragment
         return binding.root
     }

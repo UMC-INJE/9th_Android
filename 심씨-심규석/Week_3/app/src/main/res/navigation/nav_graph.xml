@@ -13,9 +13,6 @@
         <action
             android:id="@+id/action_HomeFragment_to_BannerDetailFragment"
             app:destination="@id/BannerDetailFragment" />
-        <action
-            android:id="@+id/action_HomeFragment_to_ProductDetailFragment"
-            app:destination="@id/ProductDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/SearchFragment"
@@ -35,9 +32,6 @@
         tools:layout="@layout/fragment_wish_list"
         android:name="com.umc.myapplication.fragment.WishListFragment"
         android:label="위시리스트">
-        <action
-            android:id="@+id/action_WishListFragment_to_ProductDetailFragment"
-            app:destination="@id/ProductDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/CartFragment"
