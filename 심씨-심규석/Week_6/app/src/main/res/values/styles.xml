@@ -40,7 +40,7 @@
         <item name="android:textSize">16sp</item>
         <item name="android:includeFontPadding">false</item>
     </style>
-    <style name="Text.Reguler" parent="Text.Base">
+    <style name="Text.Regular" parent="Text.Base">
         <item name="android:fontFamily">@font/notosanskr_regular</item>
     </style>
 
