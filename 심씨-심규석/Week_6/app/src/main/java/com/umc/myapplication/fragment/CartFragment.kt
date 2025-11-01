@@ -12,7 +12,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.umc.myapplication.databinding.FragmentCartBinding
 import com.umc.myapplication.testData.testProductRepository
-import com.umc.myapplication.utils.setTextWithUnderline
+import com.umc.myapplication.utils.setUnderlinedSpannable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -72,9 +72,11 @@ class FilledState(private val productId: Int) : CartState {
         binding.cartFill.description.text = product.shortDescription
         binding.cartFill.imageView.setImageResource(product.resId)
         binding.cartFill.count.text = "1"
-        binding.cartFill.delebery.setTextWithUnderline(
-            base = "Arrives Wed, 11May\nto Fri, 13 May",
-            underlined = "Edit Location"
+
+        setUnderlinedSpannable(
+            textView = binding.cartFill.delebery,
+            fullText = "Arrives Wed, 11May\nto Fri, 13 May Edit Location",
+            underlineTargets = listOf("Edit Location"),
         )
         binding.cartFill.productPrice.text = "US$${product.price}"
         binding.cartFill.price.text = "US$${product.price} + Tax"
