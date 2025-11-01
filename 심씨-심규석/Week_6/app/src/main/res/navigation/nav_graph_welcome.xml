@@ -1,0 +1,37 @@
+<navigation
+    android:id="@+id/nav_graph_auth"
+    app:startDestination="@id/WelcomeFragment"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <fragment
+        android:id="@+id/WelcomeFragment"
+        android:name="com.umc.myapplication.fragment.WelcomeFragment"
+        tools:layout="@layout/fragment_welcome"
+        android:label="프로필">
+        <action
+            android:id="@+id/action_WelcomeFragment_to_SignInFragment"
+            app:destination="@id/SignInFragment" />
+        <action
+            android:id="@+id/action_WelcomeFragment_to_SignUpFragment"
+            app:destination="@id/SignUpFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/SignInFragment"
+        android:name="com.umc.myapplication.fragment.SignInFragment"
+        tools:layout="@layout/fragment_auth"
+        android:label="로그인"/>
+
+    <fragment
+        android:id="@+id/SignUpFragment"
+        android:name="com.umc.myapplication.fragment.SignUpFragment"
+        tools:layout="@layout/fragment_auth"
+        android:label="회원가입">
+        <action
+            android:id="@+id/action_SignUpFragment_to_WelcomeFragment"
+            app:destination="@id/WelcomeFragment" />
+    </fragment>
+</navigation>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_auth"
+    app:startDestination="@id/EmailFragment">
+    <fragment
+        android:id="@+id/EmailFragment"
+        android:name="com.umc.myapplication.fragment.AuthEmailFragment"
+        tools:layout="@layout/fragment_auth_email"
+        android:label="이메일">
+        <action
+            android:id="@+id/action_Email_to_PassWard"
+            app:destination="@id/PassWordFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/PassWordFragment"
+        android:name="com.umc.myapplication.fragment.AuthPasswordFragment"
+        tools:layout="@layout/fragment_auth_password"
+        android:label="비밀번호">
+        <action
+            android:id="@+id/action_PassWordFragment_to_EmptyFragment"
+            app:destination="@id/EmptyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/EmptyFragment"
+        android:name="com.umc.myapplication.fragment.EmptyFragment"
+        tools:layout="@layout/fragment_empty"
+        android:label="비밀번호">
+    </fragment>
+</navigation>
