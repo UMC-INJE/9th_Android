@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         Thread.sleep(3000)
 
         super.onCreate(savedInstanceState)
-        
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

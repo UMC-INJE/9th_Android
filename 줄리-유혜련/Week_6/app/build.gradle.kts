@@ -57,4 +57,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("me.relex:circleindicator:2.1.6")
 }
