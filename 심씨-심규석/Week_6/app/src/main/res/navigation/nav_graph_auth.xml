@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_Email_to_PassWard"
             app:destination="@id/PassWordFragment" />
+        <action
+            android:id="@+id/action_EmailFragment_to_UserInfoFragment"
+            app:destination="@id/UserInfoFragment" />
     </fragment>
 
     <fragment
@@ -28,5 +31,14 @@
         android:name="com.umc.myapplication.fragment.EmptyFragment"
         tools:layout="@layout/fragment_empty"
         android:label="비밀번호">
+    </fragment>
+    <fragment
+        android:id="@+id/UserInfoFragment"
+        android:name="com.umc.myapplication.fragment.AuthUserInfoFragment"
+        tools:layout="@layout/fragment_auth_user_info"
+        android:label="비밀번호">
+        <action
+            android:id="@+id/action_UserInfoFragment_to_EmptyFragment"
+            app:destination="@id/EmptyFragment" />
     </fragment>
 </navigation>
