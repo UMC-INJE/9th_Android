@@ -20,10 +20,8 @@ import kotlinx.coroutines.launch
 
 class SongActivity : AppCompatActivity() {
     lateinit var binding : ActivitySongBinding
-    // 현재 곡 정보 (intent 로 전달받아 초기화)
-    private var currentSong: Song? = null
 
-    // MusicService 바인딩
+    private var currentSong: Song? = null
     private var musicService: MusicService? = null
     private var isBound = false
     private var updateJob: Job? = null
@@ -49,12 +47,7 @@ class SongActivity : AppCompatActivity() {
         binding = ActivitySongBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        if (intent.hasExtra("title") && intent.hasExtra("singer")) {
-//            binding.songMusicTitleTv.text = intent.getStringExtra("title")
-//            binding.songSingerNameTv.text = intent.getStringExtra("singer")
-//        }
-
-        // 1) 인텐트로 받은 제목/가수 → currentSong 구성
+        // 인텐트로 받은 제목/가수 → currentSong 구성
         val title = intent.getStringExtra("title") ?: "Unknown"
         val singer = intent.getStringExtra("singer") ?: "Unknown"
         currentSong = Song(
@@ -69,16 +62,7 @@ class SongActivity : AppCompatActivity() {
         binding.songMusicTitleTv.text = currentSong!!.title
         binding.songSingerNameTv.text = currentSong!!.singer
 
-        // 2) 서비스 시작 및 바인딩
-        val musicServiceIntent = Intent(this, MusicService::class.java).apply {
-            putExtra("songTitle", currentSong!!.title)
-            putExtra("songArtist", currentSong!!.singer)
-            putExtra("isPlaying", true)
-        }
-        ContextCompat.startForegroundService(this, musicServiceIntent)
-        bindService(musicServiceIntent, connection, Context.BIND_AUTO_CREATE)
-
-        // 3) UI 리스너
+        // UI 리스너
         binding.songDownIb.setOnClickListener {
             val resultIntent = Intent().apply {
                 putExtra(MainActivity.RESULT_ALBUM_TITLE, binding.songMusicTitleTv.text.toString())
@@ -89,6 +73,12 @@ class SongActivity : AppCompatActivity() {
 
         //재생&멈춤 버튼 터치 시 MediaPlayer에 반영
         binding.songMiniplayerIv.setOnClickListener {
+            ContextCompat.startForegroundService(this, Intent(this, MusicService::class.java).apply {
+                putExtra("songTitle", currentSong!!.title)
+                putExtra("songArtist", currentSong!!.singer)
+                putExtra("isPlaying", true)
+            })
+
             musicService?.playMusic()
             checkPlay()
         }
@@ -96,21 +86,19 @@ class SongActivity : AppCompatActivity() {
             musicService?.pauseMusic()
             checkPlay()
         }
-
-        // // 이전/다음 둘 다 곡을 처음부터
+        // 이전/다음 둘 다 곡을 처음부터
         binding.songPreviousIv.setOnClickListener {
             musicService?.restart()
             binding.songProgressSb.progress = 0
             binding.songStartTimeTv.text = "00:00"
         }
-
         binding.songNextIv.setOnClickListener {
             musicService?.restart()
             binding.songProgressSb.progress = 0
             binding.songStartTimeTv.text = "00:00"
         }
 
-        //SeekBar 터치 시 MediaPlayer에 영
+        //SeekBar 터치 시 MediaPlayer에 반영
         binding.songProgressSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -123,7 +111,20 @@ class SongActivity : AppCompatActivity() {
         })
     }
 
-    //서비스 연결 후 초기 UI 세팅
+    override fun onStart() {
+        super.onStart()
+        bindService(Intent(this, MusicService::class.java), connection, BIND_AUTO_CREATE)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        updateJob?.cancel()
+        if (isBound) {
+            unbindService(connection)
+            isBound = false
+        }
+    }
+
     private fun updateUI() {
         // 곡 정보 싱크
         binding.songMusicTitleTv.text = currentSong?.title ?: "Unknown"
@@ -151,7 +152,6 @@ class SongActivity : AppCompatActivity() {
         }
     }
 
-    //코루틴을 이용해, 음악 진행도를 SeekBar에 반영
     private fun updateSeekbar() {
         updateJob?.cancel()
         updateJob = lifecycleScope.launch(Dispatchers.Main) {
@@ -161,12 +161,11 @@ class SongActivity : AppCompatActivity() {
                 binding.songProgressSb.max = dur
                 binding.songProgressSb.progress = pos
                 binding.songStartTimeTv.text = millisToTime(pos)
-                delay(100) // 0.1초마다 위치 갱신
+                delay(100)
             }
         }
     }
 
-    // ms → "MM:SS"
     private fun millisToTime(ms: Int): String {
         val totalSec = ms / 1000
         val m = totalSec / 60
