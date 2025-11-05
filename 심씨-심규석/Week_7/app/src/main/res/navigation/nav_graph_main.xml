@@ -46,8 +46,8 @@
         android:label="장바구니">
         <argument
             android:name="productId"
-            app:argType="string"
-            android:defaultValue="" />
+            app:argType="integer"
+            android:defaultValue="-1" />
         <action
             android:id="@+id/action_CartFragment_to_SearchFragment"
             app:destination="@id/SearchFragment" />
@@ -77,8 +77,8 @@
         android:label="ProductDetailFragment" >
         <argument
             android:name="productId"
-            app:argType="string"
-            android:defaultValue="" />
+            app:argType="integer"
+            android:defaultValue="-1" />
 
         <action
             android:id="@+id/action_ProductDetailFragment_to_SearchFragment"

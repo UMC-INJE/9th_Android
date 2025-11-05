@@ -62,7 +62,7 @@ class EmptyState : CartState {
     }
 }
 
-class FilledState(private val productId: String) : CartState {
+class FilledState(private val productId: Int) : CartState {
     private val product = testProductRepository.products.first{it.id == productId}
     override fun render(binding: FragmentCartBinding) {
         binding.cartEmpty.root.visibility = View.GONE
@@ -103,16 +103,16 @@ class CartContext(
     val coroutineScope: LifecycleCoroutineScope,
 ) {
     private var state: CartState = EmptyState()
-    private var currentProductId : String? = null
+    private var currentProductId : Int? = null
     fun setState(newState: CartState) {
         state = newState
         state.render(binding)
     }
     fun onOrderClick() = state.onOrderClick(this)
 
-    fun setProductId(id: String?) {
+    fun setProductId(id: Int?) {
         currentProductId = id
-        if (!id.isNullOrBlank()) {
+        if (id != null && id != -1) {
             setState(FilledState(id))
         } else {
             setState(EmptyState())
@@ -127,7 +127,7 @@ class CartContext(
     }
     //상품 있을 시 지우고 상태 업뎃
     fun clearCart() {
-        currentProductId = ""
+        currentProductId = -1
         setState(EmptyState()) }
     //상품 없을 시 구매하기로 이동
     fun navigateToSearch() {

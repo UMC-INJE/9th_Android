@@ -6,7 +6,7 @@ import com.umc.myapplication.data.models.Product
 object testProductRepository {
     val products = listOf(
         Product(
-            id = "1",
+            id = 1,
             imageResource = R.drawable.img_search_item1,
             name = "Nike Everyday Plus Cushioned",
             isLiked = true,
@@ -21,7 +21,7 @@ object testProductRepository {
             ),
         ),
         Product(
-            id = "2",
+            id = 2,
             imageResource = R.drawable.img_search_item1,
             name = "Nike Everyday Plus Cushioned",
             isLiked = false,
@@ -37,7 +37,7 @@ object testProductRepository {
             ),
         ),
         Product(
-            id = "3",
+            id = 3,
             imageResource = R.drawable.img_home_new_product1,
             name = "Air Jordan XXXVI",
             isLiked = false,
@@ -53,7 +53,7 @@ object testProductRepository {
             ),
         ),
         Product(
-            id = "4",
+            id = 4,
             imageResource = R.drawable.img_home_new_product2,
             name = "Nike Air Force 1 '07",
             isLiked = false,
@@ -69,7 +69,7 @@ object testProductRepository {
             ),
         ),
         Product(
-            id = "5",
+            id = 5,
             imageResource = R.drawable.img_home_new_product2,
             name = "Nike Air Force 1 '07",
             isLiked = false,
