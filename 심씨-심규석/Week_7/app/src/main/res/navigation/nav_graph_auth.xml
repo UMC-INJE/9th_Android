@@ -6,7 +6,7 @@
     app:startDestination="@id/EmailFragment">
     <fragment
         android:id="@+id/EmailFragment"
-        android:name="com.umc.myapplication.fragment.AuthEmailFragment"
+        android:name="com.umc.myapplication.presentation.fragment.AuthEmailFragment"
         tools:layout="@layout/fragment_auth_email"
         android:label="이메일">
         <action
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/PassWordFragment"
-        android:name="com.umc.myapplication.fragment.AuthPasswordFragment"
+        android:name="com.umc.myapplication.presentation.fragment.AuthPasswordFragment"
         tools:layout="@layout/fragment_auth_password"
         android:label="비밀번호">
         <action
@@ -28,13 +28,13 @@
     </fragment>
     <fragment
         android:id="@+id/EmptyFragment"
-        android:name="com.umc.myapplication.fragment.EmptyFragment"
+        android:name="com.umc.myapplication.presentation.fragment.EmptyFragment"
         tools:layout="@layout/fragment_empty"
         android:label="비밀번호">
     </fragment>
     <fragment
         android:id="@+id/UserInfoFragment"
-        android:name="com.umc.myapplication.fragment.AuthUserInfoFragment"
+        android:name="com.umc.myapplication.presentation.fragment.AuthUserInfoFragment"
         tools:layout="@layout/fragment_auth_user_info"
         android:label="비밀번호">
         <action

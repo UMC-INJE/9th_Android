@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.gridlayout)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -61,4 +62,6 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.google.firebase.database)
 }

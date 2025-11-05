@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/WelcomeFragment"
-        android:name="com.umc.myapplication.fragment.WelcomeFragment"
+        android:name="com.umc.myapplication.presentation.fragment.WelcomeFragment"
         tools:layout="@layout/fragment_welcome"
         android:label="프로필">
         <action
@@ -21,13 +21,13 @@
 
     <fragment
         android:id="@+id/SignInFragment"
-        android:name="com.umc.myapplication.fragment.SignInFragment"
+        android:name="com.umc.myapplication.presentation.fragment.SignInFragment"
         tools:layout="@layout/fragment_auth"
         android:label="로그인"/>
 
     <fragment
         android:id="@+id/SignUpFragment"
-        android:name="com.umc.myapplication.fragment.SignUpFragment"
+        android:name="com.umc.myapplication.presentation.fragment.SignUpFragment"
         tools:layout="@layout/fragment_auth"
         android:label="회원가입">
         <action

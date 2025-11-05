@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/HomeFragment"
         tools:layout="@layout/fragment_home"
-        android:name="com.umc.myapplication.fragment.HomeFragment"
+        android:name="com.umc.myapplication.presentation.fragment.HomeFragment"
         android:label="홈">
 
         <action
@@ -20,7 +20,7 @@
     <fragment
         android:id="@+id/SearchFragment"
         tools:layout="@layout/fragment_search"
-        android:name="com.umc.myapplication.fragment.SearchFragment"
+        android:name="com.umc.myapplication.presentation.fragment.SearchFragment"
         android:label="구매하기">
         <argument
             android:name="isWishList"
@@ -33,7 +33,7 @@
     <fragment
         android:id="@+id/WishListFragment"
         tools:layout="@layout/fragment_wish_list"
-        android:name="com.umc.myapplication.fragment.WishListFragment"
+        android:name="com.umc.myapplication.presentation.fragment.WishListFragment"
         android:label="위시리스트">
         <action
             android:id="@+id/action_WishListFragment_to_ProductDetailFragment"
@@ -42,12 +42,12 @@
     <fragment
         android:id="@+id/CartFragment"
         tools:layout="@layout/fragment_cart"
-        android:name="com.umc.myapplication.fragment.CartFragment"
+        android:name="com.umc.myapplication.presentation.fragment.CartFragment"
         android:label="장바구니">
         <argument
             android:name="productId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            app:argType="string"
+            android:defaultValue="" />
         <action
             android:id="@+id/action_CartFragment_to_SearchFragment"
             app:destination="@id/SearchFragment" />
@@ -55,13 +55,13 @@
     <fragment
         android:id="@+id/ProfileFragment"
         tools:layout="@layout/fragment_profile"
-        android:name="com.umc.myapplication.fragment.ProfileFragment"
+        android:name="com.umc.myapplication.presentation.fragment.ProfileFragment"
         android:label="프로필">
     </fragment>
     <fragment
         android:id="@+id/BannerDetailFragment"
         tools:layout="@layout/fragment_banner_detail"
-        android:name="com.umc.myapplication.fragment.BannerDetailFragment"
+        android:name="com.umc.myapplication.presentation.fragment.BannerDetailFragment"
         android:label="배너 디테일">
         <argument android:name="resId" app:argType="reference" />
         <argument android:name="title" app:argType="string" />
@@ -73,11 +73,12 @@
     <fragment
         android:id="@+id/ProductDetailFragment"
         tools:layout="@layout/fragment_product_detail"
-        android:name="com.umc.myapplication.fragment.ProductDetailFragment"
+        android:name="com.umc.myapplication.presentation.fragment.ProductDetailFragment"
         android:label="ProductDetailFragment" >
         <argument
             android:name="productId"
-            app:argType="integer" />
+            app:argType="string"
+            android:defaultValue="" />
 
         <action
             android:id="@+id/action_ProductDetailFragment_to_SearchFragment"
