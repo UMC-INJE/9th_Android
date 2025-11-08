@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.gms.google-services")
+
+    id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -64,4 +67,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.google.firebase.database)
+
+    implementation("com.google.dagger:hilt-android:2.57.2")
+    ksp("com.google.dagger:hilt-android-compiler:2.57.2")
+
 }

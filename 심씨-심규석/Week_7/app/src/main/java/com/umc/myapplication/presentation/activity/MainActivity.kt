@@ -1,26 +1,21 @@
 package com.umc.myapplication.presentation.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.firebase.database.FirebaseDatabase
 import com.umc.myapplication.R
-import com.umc.myapplication.data.RealtimeRepository
-import com.umc.myapplication.data.mock.testProductRepository
 import com.umc.myapplication.databinding.ActivityMainBinding
 import com.umc.myapplication.presentation.feature.AuthViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.umc.myapplication.presentation.feature.UiProductViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<AuthViewModel>()
