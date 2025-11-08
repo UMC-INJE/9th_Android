@@ -30,7 +30,7 @@ class AuthViewModel : ViewModel() {
         _form.value = new
     }
 
-    public fun setButtonEnabled(enabled: Boolean) {
+    fun setButtonEnabled(enabled: Boolean) {
         _buttonEnabled.value = enabled
     }
 }
