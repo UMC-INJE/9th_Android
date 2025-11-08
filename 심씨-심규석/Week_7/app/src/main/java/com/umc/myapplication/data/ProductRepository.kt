@@ -5,7 +5,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.umc.myapplication.data.models.Product
 import kotlinx.coroutines.tasks.await
 
-class RealtimeRepository (
+class ProductRepository (
     private val db: FirebaseDatabase
 ){
     private val productRef: DatabaseReference
@@ -23,10 +23,10 @@ class RealtimeRepository (
     }
 
     // upsert
-    suspend fun upsertPostProduct(productId: Int, product: Product) {
+    suspend fun upsertProduct(productId: Int, product: Product) {
         productRef.child(productId.toString()).setValue(product).await()
     }
-    suspend fun upsertProducts(products: List<Product>) {
+    suspend fun upsertProductList(products: List<Product>) {
         if (products.isEmpty()) return
         val updates = buildMap<String, Any?> {
             for (product in products) {
@@ -39,7 +39,7 @@ class RealtimeRepository (
     }
 
     // 삭제
-    suspend fun deletePostProduct(productId: String) {
-        productRef.child(productId).removeValue().await()
+    suspend fun deleteProduct(productId: Int) {
+        productRef.child(productId.toString()).removeValue().await()
     }
 }
