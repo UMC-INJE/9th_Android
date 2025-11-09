@@ -1,5 +1,6 @@
 package com.umc.myapplication.presentation.feature
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.umc.myapplication.data.CategoryRepository
@@ -34,7 +35,10 @@ class UiProductViewModel @Inject constructor(
     val state: StateFlow<UiProductState> = _state.asStateFlow()
 
     fun loadOnce()  = runWithState(
-        block = {   fetchProductsAndCategories() },
+        block = {
+            val data = fetchProductsAndCategories()
+            Log.d("firebase", "loadOnce: "+data)
+                data},
         onMapToState = { (products, categoryMap) ->
             val uiProducts = products.toUiProducts(categoryMap)
             if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
@@ -56,6 +60,16 @@ class UiProductViewModel @Inject constructor(
     fun upsertProductList(items: List<Product>) = runWithState(
         block = {
             productRepository.upsertProductList(items)
+            fetchProductsAndCategories()
+        },
+        onMapToState = { (products, categoryMap) ->
+            val uiProducts = products.toUiProducts(categoryMap)
+            if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
+        }
+    )
+    fun upsertIsLiked(productId: Int, isLiked: Boolean) = runWithState(
+        block = {
+            productRepository.upsertIsLiked(productId, isLiked)
             fetchProductsAndCategories()
         },
         onMapToState = { (products, categoryMap) ->
