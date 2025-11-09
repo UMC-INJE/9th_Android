@@ -1,10 +1,12 @@
 package com.umc.myapplication.presentation.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,10 +19,16 @@ import com.umc.myapplication.presentation.adapter.HomeNewProductAdapter
 import com.umc.myapplication.databinding.FragmentHomeBinding
 import com.umc.myapplication.domain.model.homeBanner
 import com.umc.myapplication.data.mock.testProductRepository
+import com.umc.myapplication.domain.model.UiProduct
+import com.umc.myapplication.presentation.feature.UiProductState
+import com.umc.myapplication.presentation.feature.UiProductViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
+    private val uiViewModel : UiProductViewModel by viewModels()
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -42,6 +50,7 @@ class HomeFragment : Fragment() {
     private val bannerFragmentList = bannerList.map {
         HomeBannerFragment.newInstance(it)
     }
+    private val newProductIdSet = listOf(1,3,4).toSet()
     private val newProductList = testProductRepository.products.subList(2,4)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,18 +59,13 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewPager.adapter = BannerPagerAdapter(this, bannerFragmentList)
 
-        binding.recyclerView.adapter = HomeNewProductAdapter(
-            newProductList,
-            onItemclick = {
-                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
-
-                    productId = it.id
-                )
-                findNavController().navigate(action)
-            }
-        )
-        binding.recyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false) // ← 이 줄[web:22][web:21]
+        val newProductAdapter = HomeNewProductAdapter(onItemclick = { product ->
+            val action = HomeFragmentDirections
+                .actionHomeFragmentToProductDetailFragment(productId = product.id)
+            findNavController().navigate(action)
+        })
+        binding.recyclerView.adapter = newProductAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false) // ← 이 줄[web:22][web:21]
 
 
         // Inflate the layout for this fragment
@@ -77,8 +81,40 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.viewPager.registerOnPageChangeCallback(pageCallback)
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                uiViewModel.loadOnce()
+                uiViewModel.state.collect { s ->
+                    Log.d("state", s.toString())
+                    when (s) {
+                        is UiProductState.Data -> {
+                            val products = s.products
+                            val items = products.filter { it.id in newProductIdSet }
+                            renderProducts(items)
+                            Log.d("products", "onViewCreated: " + products)
+                            Log.d("items", "onViewCreated: " + items)
+                        }
+                        is UiProductState.Error -> {
+                            // 에러 처리
+                        }
+                        is UiProductState.Loading -> {
+                            // 로딩 처리
+                        }
+                        is UiProductState.Empty -> {
+                            //빈값 처리
+                        }
+
+                        UiProductState.Idle -> {
+                            //이건 뭐 해야함?
+                        }
+                    }
+
+                }
+            }
+        }
+
+        binding.viewPager.registerOnPageChangeCallback(pageCallback)
         // 화면이 STARTED 이상일 때 자동 스크롤 루프 시작, STOPPED 아래로 내려가면 자동 취소
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -89,6 +125,13 @@ class HomeFragment : Fragment() {
         }
 
     }
+    private fun renderProducts(items: List<UiProduct>) {
+
+        (binding.recyclerView.adapter as? HomeNewProductAdapter)?.submitList(items)
+        // 가시성/스켈레톤 제어 예시
+        binding.recyclerView.visibility = View.VISIBLE
+    }
+
     private suspend fun autoScrollLoop() {
         while (true) {
             delay(intervalMs)
