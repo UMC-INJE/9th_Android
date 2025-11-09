@@ -6,7 +6,7 @@ data class UiProduct(
     val imageResource : Int,
     val imageUrl : String? = null,
     //추후 추가
-    var isLiked : Boolean = false,
+    var liked : Boolean = false,
     val price : Int,
     val category : String = "",
     val shortDescription : String = "",

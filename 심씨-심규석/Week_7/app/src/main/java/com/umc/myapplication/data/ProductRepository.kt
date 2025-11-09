@@ -30,13 +30,14 @@ class ProductRepository (
         productRef.child(productId.toString()).setValue(product).await()
     }
     suspend fun upsertIsLiked(productId: Int, isLiked: Boolean) {
-        productRef.child(productId.toString()).child("isLiked").setValue(isLiked).await()
+        productRef.child(productId.toString()).child("liked").setValue(isLiked).await()
     }
     suspend fun upsertProductList(products: List<Product>) {
         if (products.isEmpty()) return
         val updates = buildMap<String, Any?> {
             for (product in products) {
                 put(product.id.toString(), product)
+                Log.d("ProductRepo", "upsertProductList: $product")
             }
         }
         if (updates.isNotEmpty()) {

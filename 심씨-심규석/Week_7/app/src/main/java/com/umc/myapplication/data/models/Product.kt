@@ -6,7 +6,8 @@ data class Product(
     var id: Int = -1,
     var name: String = "",
     var imageResource: Int = 0,
-    var isLiked: Boolean = false,
+
+    var liked: Boolean = false,
     var price: Int = 0,
     var categoryId: Int = -1,
     var shortDescription: String = "",
@@ -15,19 +16,6 @@ data class Product(
     var options: List<String> = emptyList()
 )
 
-fun Product.toMap(imageUrl: String? = null): Map<String, Any?> = mapOf(
-    "id" to id,
-    "name" to name,
-    "isLiked" to isLiked,
-    "price" to price,
-    "categoryId" to categoryId,
-    "shortDescription" to shortDescription,
-    "description" to description,
-    "colors" to colors,
-    "options" to options,
-    "imageUrl" to imageUrl,
-    "imageResourceId" to imageResource
-)
 
 fun List<Product>.toUiProducts(categoryMap: Map<Int, Category>): List<UiProduct> =
     map { p ->
@@ -36,7 +24,7 @@ fun List<Product>.toUiProducts(categoryMap: Map<Int, Category>): List<UiProduct>
             id = p.id,
             name = p.name,
             imageResource = p.imageResource,
-            isLiked = p.isLiked,
+            liked = p.liked,
             shortDescription = p.shortDescription,
             description = p.description,
             price = p.price,

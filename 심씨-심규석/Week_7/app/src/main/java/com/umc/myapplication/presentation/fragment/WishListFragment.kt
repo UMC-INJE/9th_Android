@@ -15,7 +15,7 @@ class WishListFragment : Fragment() {
     private var _binding: FragmentWishListBinding? = null
     private val binding get() = _binding!!
 
-    val list = testProductRepository.products.filter { it.isLiked }
+    val list = testProductRepository.products.filter { it.liked }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
