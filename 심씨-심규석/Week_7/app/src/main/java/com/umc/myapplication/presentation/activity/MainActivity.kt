@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.umc.myapplication.R
+import com.umc.myapplication.data.mock.testProductRepository
 import com.umc.myapplication.databinding.ActivityMainBinding
 import com.umc.myapplication.presentation.feature.AuthViewModel
 import com.umc.myapplication.presentation.feature.UiProductViewModel
@@ -19,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<AuthViewModel>()
+    private val uiViewModel : UiProductViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +28,10 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //테스트 데이터 업데이트
+        uiViewModel.upsertProductList(testProductRepository.products)
+        uiViewModel.loadOnce()
 
 
         //FragmentContainerView에 연결된 NavController
