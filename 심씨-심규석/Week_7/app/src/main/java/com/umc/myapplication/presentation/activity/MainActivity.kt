@@ -20,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<AuthViewModel>()
-    private val uiViewModel : UiProductViewModel by viewModels()
+    private val uiViewModel: UiProductViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +59,22 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
             insets
         }
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
 
+            val destId = item.itemId
+
+            val options = androidx.navigation.navOptions {
+                // 해당 탭의 루트로 스택 정리
+                popUpTo(destId) { inclusive = false }
+                // 같은 목적지로 다시 이동할 때 중복 생성 방지
+                launchSingleTop = true
+            }
+
+            // 현재 목적지와 같으면 굳이 네비게이션하지 않도록 가드
+            if (navController.currentDestination?.id != destId) {
+                navController.navigate(destId, null, options)
+            }
+            true
+        }
     }
 }
