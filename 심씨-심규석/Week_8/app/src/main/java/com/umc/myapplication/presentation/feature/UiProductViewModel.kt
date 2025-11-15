@@ -145,5 +145,4 @@ class UiProductViewModel @Inject constructor(
             val categoryMap = categoriesDef.await().associateBy { it.id }
             products to categoryMap
         }
-
 }

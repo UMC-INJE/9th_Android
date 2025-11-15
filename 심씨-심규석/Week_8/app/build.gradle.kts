@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.gridlayout)
     implementation(libs.androidx.recyclerview)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
