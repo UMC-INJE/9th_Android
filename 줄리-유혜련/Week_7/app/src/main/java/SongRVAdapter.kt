@@ -3,13 +3,13 @@ package com.umc.myapplication
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.umc.myapplication.databinding.ItemSongBinding
 
 class SongRVAdapter(private val context: Context)
     : RecyclerView.Adapter<SongRVAdapter.ViewHolder>() {
-
-    // 노래 데이터 리스트
     private val songs = ArrayList<Song>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -33,5 +33,14 @@ class SongRVAdapter(private val context: Context)
             binding.itemSongSinger.text = song.singer
             binding.itemSongImg.setImageResource(song.coverImg)
         }
+    }
+
+    interface MyItemClickListener{
+        fun onRemoveSong(songId: Int)
+    }
+    private lateinit var mItemClickListener: MyItemClickListener
+
+    fun setMyItemClickListener(itemClickListener: MyItemClickListener){
+        mItemClickListener = itemClickListener
     }
 }

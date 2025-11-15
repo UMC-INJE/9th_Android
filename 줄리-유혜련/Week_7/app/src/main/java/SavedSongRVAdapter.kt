@@ -7,8 +7,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.umc.myapplication.databinding.ItemSongBinding
 
 class SavedSongRVAdapter : RecyclerView.Adapter<SavedSongRVAdapter.ViewHolder>() {
-
     private val songs = ArrayList<Song>()
+    interface MyItemClickListener{
+        fun onRemoveSong(songId: Int)
+    }
+    private lateinit var mItemClickListener : MyItemClickListener
+
+    fun setMyItemClickListener(itemClickListener: MyItemClickListener){
+        mItemClickListener = itemClickListener
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemSongBinding.inflate(
@@ -20,16 +28,10 @@ class SavedSongRVAdapter : RecyclerView.Adapter<SavedSongRVAdapter.ViewHolder>()
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = songs[position]
-        holder.bind(item)
-
-        // […] 버튼 클릭 -> 해당 아이템 삭제
+        holder.bind(songs[position])
         holder.binding.itemSongMore.setOnClickListener {
-            val pos = holder.bindingAdapterPosition
-            if (pos != RecyclerView.NO_POSITION) {
-                songs.removeAt(pos)
-                notifyItemRemoved(pos)
-            }
+            mItemClickListener.onRemoveSong(songs[position].id)
+            removeSong(position)
         }
     }
 
@@ -39,6 +41,12 @@ class SavedSongRVAdapter : RecyclerView.Adapter<SavedSongRVAdapter.ViewHolder>()
     fun addSongs(newSongs: List<Song>) {
         songs.clear()
         songs.addAll(newSongs)
+        notifyDataSetChanged()
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun removeSong(position: Int){
+        songs.removeAt(position)
         notifyDataSetChanged()
     }
 
