@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.umc.myapplication.data.CartRepository
 import com.umc.myapplication.databinding.FragmentProductDetailBinding
 import com.umc.myapplication.domain.model.UiProduct
 import com.umc.myapplication.presentation.feature.UiProductState
@@ -19,10 +20,12 @@ import com.umc.myapplication.presentation.feature.UiProductViewModel
 import com.umc.myapplication.presentation.utils.setWishIcon
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProductDetailFragment : Fragment() {
     private val uiViewModel : UiProductViewModel by viewModels()
+    @Inject lateinit var cartRepository: CartRepository
     private var _binding: FragmentProductDetailBinding? = null
     private val binding get() = _binding!!
     private val args: ProductDetailFragmentArgs by navArgs()
@@ -89,8 +92,10 @@ class ProductDetailFragment : Fragment() {
             findNavController().popBackStack()
         }
         binding.addCartButton.setOnClickListener {
+            cartRepository.saveProductId(item.id)
             val action = ProductDetailFragmentDirections
                 .actionProductDetailFragmentToCartFragment(productId = item.id)
+
             findNavController().navigate(action)
         }
     }

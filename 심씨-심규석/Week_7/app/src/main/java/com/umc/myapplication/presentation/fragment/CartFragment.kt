@@ -1,24 +1,33 @@
 package com.umc.myapplication.presentation.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.navArgs
+import com.umc.myapplication.data.CartRepository
 import com.umc.myapplication.databinding.FragmentCartBinding
 import com.umc.myapplication.presentation.utils.setUnderlinedSpannable
-import com.umc.myapplication.data.mock.testProductRepository
+import com.umc.myapplication.domain.model.UiProduct
+import com.umc.myapplication.presentation.feature.UiProductViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.getValue
 
+@AndroidEntryPoint
 class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null
+    private val uiViewModel : UiProductViewModel by activityViewModels()
+    @Inject lateinit var cartRepository: CartRepository
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -33,7 +42,6 @@ class CartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val args: CartFragmentArgs by navArgs() // productId 센티넬 혹은 nullable
         val ctx = CartContext(
             binding = binding,
             navigator = { directions ->
@@ -41,7 +49,9 @@ class CartFragment : Fragment() {
             },
             coroutineScope = viewLifecycleOwner.lifecycleScope
         )
-        ctx.setProductId(args.productId)
+        val productId = cartRepository.getProductId()
+        val ui = uiViewModel.getUiProductById(productId)
+        ctx.setProduct(ui)
 
         binding.orderButton.setOnClickListener { ctx.onOrderClick() }
     }
@@ -62,8 +72,8 @@ class EmptyState : CartState {
     }
 }
 
-class FilledState(private val productId: Int) : CartState {
-    private val product = testProductRepository.products.first{it.id == productId}
+class FilledState(private val product: UiProduct) : CartState {
+
     override fun render(binding: FragmentCartBinding) {
         binding.cartEmpty.root.visibility = View.GONE
         binding.cartFill.root.visibility = View.VISIBLE
@@ -110,10 +120,9 @@ class CartContext(
     }
     fun onOrderClick() = state.onOrderClick(this)
 
-    fun setProductId(id: Int?) {
-        currentProductId = id
-        if (id != null && id != -1) {
-            setState(FilledState(id))
+    fun setProduct(ui: UiProduct?) {
+        if (ui != null) {
+            setState(FilledState(ui))
         } else {
             setState(EmptyState())
         }

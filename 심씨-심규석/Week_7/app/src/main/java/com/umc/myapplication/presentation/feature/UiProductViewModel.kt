@@ -129,7 +129,12 @@ class UiProductViewModel @Inject constructor(
         }
         // finally에서 Idle로 덮어쓰지 않기: 성공/에러가 바로 사라지는 문제 방지
     }
-
+    fun getUiProductById(id: Int): UiProduct? {
+        val s = state.value
+        Log.d("uiVM", "getUiProductById: $s")
+        Log.d("uiVM", "getUiProductById: ${s is UiProductState.Data}")
+        return if (s is UiProductState.Data) s.products.firstOrNull { it.id == id } else null
+    }
 
 
     private suspend fun fetchProductsAndCategories(): Pair<List<Product>, Map<Int, Category>> =

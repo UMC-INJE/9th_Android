@@ -85,6 +85,8 @@
             app:destination="@id/SearchFragment" />
         <action
             android:id="@+id/action_ProductDetailFragment_to_CartFragment"
-            app:destination="@id/CartFragment" />
+            app:destination="@id/CartFragment"
+            app:popUpToInclusive="true"
+            />
     </fragment>
 </navigation>
