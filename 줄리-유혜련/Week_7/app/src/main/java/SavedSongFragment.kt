@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.umc.myapplication.data.db.SongDatabase
 import com.umc.myapplication.databinding.FragmentLockerSavedsongBinding
 
 class SavedSongFragment : Fragment() {
     lateinit var binding: FragmentLockerSavedsongBinding
+    lateinit var songDB: SongDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -17,6 +19,8 @@ class SavedSongFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLockerSavedsongBinding.inflate(inflater, container, false)
+
+        songDB = SongDatabase.getInstance(requireContext())!!
 
         return binding.root
     }
@@ -31,15 +35,15 @@ class SavedSongFragment : Fragment() {
 
         val songRVAdapter = SavedSongRVAdapter()
 
+        songRVAdapter.setMyItemClickListener(object : SavedSongRVAdapter.MyItemClickListener{
+            override fun onRemoveSong(songId: Int) {
+                songDB.songDao().updateIsLikeById(false,songId)
+            }
+
+        })
+
         binding.lockerSavedSongRecyclerView.adapter = songRVAdapter
 
-        val songs = arrayListOf(
-            Song(id = 1, title = "Lilac", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 2, title = "Blueming", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 3, title = "Love Poem", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 4, title = "Coin", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 5, title = "Celebrity", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2)
-        )
-        songRVAdapter.addSongs(songs)
+        songRVAdapter.addSongs(songDB.songDao().getLikedSongs(true) as ArrayList<Song>)
     }
 }

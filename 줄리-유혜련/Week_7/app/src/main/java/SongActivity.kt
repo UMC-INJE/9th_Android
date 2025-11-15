@@ -1,175 +1,236 @@
 package com.umc.myapplication
 
-
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.IBinder
+import android.util.Log
 import android.view.View
-import android.widget.SeekBar
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.umc.myapplication.databinding.ActivitySongBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.google.gson.Gson
+import com.umc.myapplication.data.db.SongDatabase
 
 class SongActivity : AppCompatActivity() {
+
+    //전역 변수
     lateinit var binding : ActivitySongBinding
+    private var timer: Timer? = null
+    private var mediaPlayer: MediaPlayer? = null
+    private var gson: Gson = Gson()
 
-    private var currentSong: Song? = null
-    private var musicService: MusicService? = null
-    private var isBound = false
-    private var updateJob: Job? = null
-
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as MusicService.MusicBinder
-            musicService = binder.getService()
-            isBound = true
-            updateUI()
-            updateSeekbar()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-            musicService = null
-            updateJob?.cancel()
-        }
-    }
+    val songs = arrayListOf<Song>()
+    lateinit var songDB: SongDatabase
+    var nowPos = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySongBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 인텐트로 받은 제목/가수 → currentSong 구성
-        val title = intent.getStringExtra("title") ?: "Unknown"
-        val singer = intent.getStringExtra("singer") ?: "Unknown"
-        currentSong = Song(
-            id = 1,
-            title = title,
-            singer = singer,
-            album = "Unknown",
-            coverImg = R.drawable.ic_launcher_foreground
-        )
+        initPlayList()
+        initSong()
+        initClickListener()
 
-        // 상단 텍스트 표시
-        binding.songMusicTitleTv.text = currentSong!!.title
-        binding.songSingerNameTv.text = currentSong!!.singer
 
-        // UI 리스너
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        songs[nowPos].second = ((binding.songProgressSb.progress * songs[nowPos].playTime)/100)/1000
+        songs[nowPos].isPlaying = false
+        setPlayerStatus(false)
+
+        val sharedPreferences = getSharedPreferences("song", MODE_PRIVATE)
+        val editor = sharedPreferences.edit() // 에디터
+
+        editor.putInt("songId",songs[nowPos].id)
+
+        editor.apply()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.interrupt()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+    private fun initPlayList(){
+        songDB = SongDatabase.getInstance(this)!!
+        songs.clear()
+        songs.addAll(songDB.songDao().getSongs())
+
+        if (songs.isEmpty()) {
+            Toast.makeText(this, "재생할 노래가 없습니다.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
+    }
+
+    private fun initClickListener(){
         binding.songDownIb.setOnClickListener {
-            val resultIntent = Intent().apply {
-                putExtra(MainActivity.RESULT_ALBUM_TITLE, binding.songMusicTitleTv.text.toString())
-            }
-            setResult(RESULT_OK, resultIntent)
             finish()
         }
 
-        //재생&멈춤 버튼 터치 시 MediaPlayer에 반영
         binding.songMiniplayerIv.setOnClickListener {
-            ContextCompat.startForegroundService(this, Intent(this, MusicService::class.java).apply {
-                putExtra("songTitle", currentSong!!.title)
-                putExtra("songArtist", currentSong!!.singer)
-                putExtra("isPlaying", true)
-            })
-
-            musicService?.playMusic()
-            checkPlay()
+            setPlayerStatus(true)
         }
+
         binding.songPauseIv.setOnClickListener {
-            musicService?.pauseMusic()
-            checkPlay()
+            setPlayerStatus(false)
         }
-        // 이전/다음 둘 다 곡을 처음부터
-        binding.songPreviousIv.setOnClickListener {
-            musicService?.restart()
-            binding.songProgressSb.progress = 0
-            binding.songStartTimeTv.text = "00:00"
-        }
+
         binding.songNextIv.setOnClickListener {
-            musicService?.restart()
-            binding.songProgressSb.progress = 0
-            binding.songStartTimeTv.text = "00:00"
+            moveSong(+1)
         }
 
-        //SeekBar 터치 시 MediaPlayer에 반영
-        binding.songProgressSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    musicService?.seekTo(progress)
-                    binding.songStartTimeTv.text = millisToTime(progress)
-                }
+        binding.songPreviousIv.setOnClickListener {
+            moveSong(-1)
+        }
+
+        binding.songLikeIv.setOnClickListener {
+            setLike(songs[nowPos].isLike)
+        }
+    }
+
+    private fun initSong(){
+        if (songs.isEmpty()) return
+
+        val spf = getSharedPreferences("song", MODE_PRIVATE)
+        val songId = spf.getInt("songId",0)
+
+        nowPos = getPlayingSongPosition(songId).coerceIn(0, songs.size - 1)
+
+        setPlayer(songs[nowPos])
+        startTimer()
+    }
+
+    private fun setLike(isLike: Boolean){
+        songs[nowPos].isLike = !isLike
+        songDB.songDao().updateIsLikeById(!isLike,songs[nowPos].id)
+
+        if (!isLike){
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_on)
+        } else{
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_off)
+        }
+
+    }
+
+    private fun moveSong(direct: Int){
+        if (nowPos + direct < 0){
+            Toast.makeText(this,"first song",Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (nowPos + direct >= songs.size){
+            Toast.makeText(this,"last song",Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        nowPos += direct
+
+        timer?.interrupt()
+        startTimer()
+
+        mediaPlayer?.release()
+        mediaPlayer = null
+
+        setPlayer(songs[nowPos])
+    }
+
+    private fun getPlayingSongPosition(songId: Int): Int{
+        for (i in 0 until songs.size){
+            if (songs[i].id == songId){
+                return i
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-    }
-
-    override fun onStart() {
-        super.onStart()
-        bindService(Intent(this, MusicService::class.java), connection, BIND_AUTO_CREATE)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        updateJob?.cancel()
-        if (isBound) {
-            unbindService(connection)
-            isBound = false
         }
+        return 0
     }
 
-    private fun updateUI() {
-        // 곡 정보 싱크
-        binding.songMusicTitleTv.text = currentSong?.title ?: "Unknown"
-        binding.songSingerNameTv.text = currentSong?.singer ?: "Unknown"
+    private fun setPlayer(song: Song){
+        binding.songMusicTitleTv.text = song.title
+        binding.songSingerNameTv.text = song.singer
+        binding.songStartTimeTv.text = String.format("%02d:%02d",song.second / 60, song.second % 60)
+        binding.songEndTimeTv.text = String.format("%02d:%02d",song.playTime / 60, song.playTime % 60)
+        binding.songAlbumIv.setImageResource(song.coverImg!!)
+        binding.songProgressSb.progress = (song.second * 1000 / song.playTime)
+        val music = resources.getIdentifier(song.music, "raw", this.packageName)
+        mediaPlayer = MediaPlayer.create(this, music)
+        if (song.isLike){
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_on)
+        } else{
+            binding.songLikeIv.setImageResource(R.drawable.ic_my_like_off)
+        }
+        setPlayerStatus(song.isPlaying)
 
-        // SeekBar 최대값/시간 텍스트
-        val duration = musicService?.getDuration() ?: 0
-        binding.songProgressSb.max = duration
-        binding.songEndTimeTv.text = millisToTime(duration)
-        binding.songStartTimeTv.text = millisToTime(musicService?.getCurrentPosition() ?: 0)
-
-        // 재생/일시정지 아이콘 상태
-        checkPlay()
     }
 
-    // 재생 상태에 따라 아이콘 토글
-    private fun checkPlay() {
-        val playing = musicService?.isPlaying() == true
-        if (playing) {
+    private fun setPlayerStatus (isPlaying : Boolean){
+        songs[nowPos].isPlaying = isPlaying
+        timer?.isPlaying = isPlaying
+
+        if(isPlaying){
             binding.songMiniplayerIv.visibility = View.GONE
             binding.songPauseIv.visibility = View.VISIBLE
+            mediaPlayer?.start()
         } else {
             binding.songMiniplayerIv.visibility = View.VISIBLE
             binding.songPauseIv.visibility = View.GONE
-        }
-    }
-
-    private fun updateSeekbar() {
-        updateJob?.cancel()
-        updateJob = lifecycleScope.launch(Dispatchers.Main) {
-            while (isBound && musicService != null) {
-                val pos = musicService!!.getCurrentPosition()
-                val dur = musicService!!.getDuration()
-                binding.songProgressSb.max = dur
-                binding.songProgressSb.progress = pos
-                binding.songStartTimeTv.text = millisToTime(pos)
-                delay(100)
+            if(mediaPlayer?.isPlaying == true){
+                mediaPlayer?.pause()
             }
         }
+
     }
 
-    private fun millisToTime(ms: Int): String {
-        val totalSec = ms / 1000
-        val m = totalSec / 60
-        val s = totalSec % 60
-        return String.format("%02d:%02d", m, s)
+    private fun startTimer(){
+        timer?.interrupt()
+
+        timer = Timer(songs[nowPos].playTime, songs[nowPos].isPlaying).also {
+            it.start()
+        }
     }
+
+    inner class Timer(private val playTime: Int,var isPlaying: Boolean = true):Thread(){
+
+        private var second : Int = 0
+        private var mills: Float = 0f
+
+        override fun run() {
+            super.run()
+            try {
+                while (true){
+
+                    if (second >= playTime){
+                        break
+                    }
+
+                    if (isPlaying){
+                        sleep(50)
+                        mills += 50
+
+                        runOnUiThread {
+                            binding.songProgressSb.progress = ((mills / playTime)*100).toInt()
+                        }
+
+                        if (mills % 1000 == 0f){
+                            runOnUiThread {
+                                binding.songStartTimeTv.text = String.format("%02d:%02d",second / 60, second % 60)
+                            }
+                            second++
+                        }
+
+                    }
+
+                }
+
+            }catch (e: InterruptedException){
+                Log.d("Song","쓰레드가 죽었습니다. ${e.message}")
+            }
+
+        }
+    }
+
 }
