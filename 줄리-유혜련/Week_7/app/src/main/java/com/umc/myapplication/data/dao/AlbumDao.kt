@@ -1,20 +1,35 @@
 package com.umc.myapplication.data.dao
 
-import com.umc.myapplication.data.entity.AlbumEntity
 import androidx.room.*
+import com.umc.myapplication.Album
+import com.umc.myapplication.Like
 
 @Dao
 interface AlbumDao {
-
-    // 앨범 추가 (한 개)
     @Insert
-    fun insert(album: AlbumEntity): Long
+    fun insert(album: Album)
 
-    // 모든 앨범 조회
+    @Update
+    fun update(album: Album)
+
+    @Delete
+    fun delete(album: Album)
+
     @Query("SELECT * FROM AlbumTable")
-    fun getAlbums(): List<AlbumEntity>
+    fun getAlbums(): List<Album>
 
-    // id로 특정 앨범 조회
-    @Query("SELECT * FROM AlbumTable WHERE id = :albumId")
-    fun getAlbumById(albumId: Int):AlbumEntity?
+    @Query("SELECT * FROM AlbumTable WHERE id = :id")
+    fun getAlbum(id: Int): Album
+
+    @Insert
+    fun likeAlbum(like: Like)
+
+    @Query("DELETE FROM LikeTable WHERE userId = :userId AND albumId = :albumId")
+    fun disLikeAlbum(userId: Int, albumId: Int)
+
+    @Query("SELECT id FROM LikeTable WHERE userId = :userId AND albumId = :albumId")
+    fun isLikedAlbum(userId: Int, albumId: Int): Int?
+
+    @Query("SELECT AT.* FROM LikeTable as LT LEFT JOIN AlbumTable as AT ON LT.albumId = AT.id WHERE LT.userId = :userId")
+    fun getLikedAlbums(userId: Int): List<Album>
 }

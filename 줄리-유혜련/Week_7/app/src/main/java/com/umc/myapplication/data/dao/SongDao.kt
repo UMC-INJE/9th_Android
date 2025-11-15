@@ -1,20 +1,28 @@
 package com.umc.myapplication.data.dao
 
-import com.umc.myapplication.data.entity.SongEntity
 import androidx.room.*
+import com.umc.myapplication.Song
 
 @Dao
 interface SongDao {
-
-    // 노래 추가 (한 개)
     @Insert
-    fun insert(song: SongEntity): Long
+    fun insert(song: Song)
 
-    // 모든 노래 조회
+    @Update
+    fun update(song: Song)
+
+    @Delete
+    fun delete(song: Song)
+
     @Query("SELECT * FROM SongTable")
-    fun getSongs(): List<SongEntity>
+    fun getSongs(): List<Song>
 
-    // 특정 앨범에 속한 노래들 조회
-    @Query("SELECT * FROM SongTable WHERE albumIdx = :albumId")
-    fun getSongsByAlbum(albumId: Int): List<SongEntity>
+    @Query("SELECT * FROM SongTable WHERE id = :id")
+    fun getSong(id: Int): Song
+
+    @Query("UPDATE SongTable SET isLike= :isLike WHERE id = :id")
+    fun updateIsLikeById(isLike: Boolean,id: Int)
+
+    @Query("SELECT * FROM SongTable WHERE isLike= :isLike")
+    fun getLikedSongs(isLike: Boolean): List<Song>
 }
