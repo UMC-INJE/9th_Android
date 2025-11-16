@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import com.umc.myapplication.Album
 import com.umc.myapplication.AlbumRVAdapter
 import com.umc.myapplication.BannerFragment
@@ -20,14 +21,19 @@ import com.umc.myapplication.HeroSlideFragment
 import com.umc.myapplication.HeroSlideVPAdapter
 import com.umc.myapplication.MainActivity
 import com.umc.myapplication.R
+import com.umc.myapplication.Song
+import com.umc.myapplication.data.db.SongDatabase
 import com.umc.myapplication.databinding.FragmentHomeBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
+
     lateinit var binding: FragmentHomeBinding
     private var albumDatas = ArrayList<Album>()
+
+    private lateinit var songDB: SongDatabase
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,46 +42,34 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        albumDatas.apply {
-            add(Album("Butter", "방탄소년단 (BTS)", R.drawable.img_album_exp))
-            add(Album("Lilac", "아이유 (IU)", R.drawable.img_album_exp2))
-            add(Album("Next Level", "에스파 (AESPA)", R.drawable.img_album_exp3))
-            add(Album("Boy with Luv", "방탄소년단 (BTS)", R.drawable.img_album_exp4))
-            add(Album("BBoom BBoom", "모모랜드 (MOMOLAND)", R.drawable.img_album_exp5))
-            add(Album("Weekend", "태연 (Tae Yeon)", R.drawable.img_album_exp6))
-        }
+        // 1) DB 에서 앨범 목록 가져오기
+        songDB = SongDatabase.getInstance(requireContext())!!
+        albumDatas.addAll(songDB.albumDao().getAlbums()) // songDB에서 album list를 가져옵니다.
 
+        // 2) 어댑터 + 리사이클러뷰 세팅
         val albumRVAdapter = AlbumRVAdapter(albumDatas)
         binding.homeTodayMusicAlbumRv.adapter = albumRVAdapter
-        binding.homeTodayMusicAlbumRv.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        albumRVAdapter.setMyItemClickListener(object : AlbumRVAdapter.MyItemClickListener {
-            override fun onItemClick(item: Album) {
-                val args = bundleOf(
-                    AlbumFragment.KEY_TITLE to item.title,
-                    AlbumFragment.KEY_ARTIST to item.singer,
-                    AlbumFragment.KEY_IMAGE_RES to item.coverImg
-                )
-                val dest = AlbumFragment().apply { arguments = args }
+        // 3) 카드 클릭 / Play 버튼 클릭 / 삭제 콜백
+        albumRVAdapter.setMyItemClickListener(object : AlbumRVAdapter.MyItemClickListener{
 
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_frm, dest)     // main_frm 이 FrameLayout 컨테이너인지 확인
-                    .addToBackStack(null)
-                    .commitAllowingStateLoss()
+            override fun onItemClick(album: Album) {
+                changeAlbumFragment(album)
             }
 
-            override fun onPlayClick(item: Album) {
-                val first = item.songs.firstOrNull()
-                val titleForMini = first?.title ?: item.title
-                val artistForMini = first?.singer ?: item.singer
-
-                (requireActivity() as MainActivity).updateMiniPlayer(
-                    title = titleForMini,
-                    artist = artistForMini,
+            override fun onPlayClick(album: Album) {
+                val song = Song(
+                    title = album.title ?: "",
+                    singer = album.singer ?: "",
+                    coverImg = album.coverImg
                 )
+
+                (requireActivity() as MainActivity).updateMiniPlayer(song)
             }
         })
+
+        // 레이아웃 매니저 설정
+        binding.homeTodayMusicAlbumRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         val heroAdapter = HeroSlideVPAdapter(this).apply {
             addFragment(
@@ -118,13 +112,26 @@ class HomeFragment : Fragment() {
             }
         }
 
-        val bannerAdapter = BannerVPAdapter(this).apply {
-            addFragment(BannerFragment(R.drawable.img_home_viewpager_exp))
-            addFragment(BannerFragment(R.drawable.img_home_viewpager_exp2))
-        }
+        val bannerAdapter = BannerVPAdapter(this)
+        bannerAdapter.addFragment(BannerFragment(R.drawable.img_home_viewpager_exp))
+        bannerAdapter.addFragment(BannerFragment(R.drawable.img_home_viewpager_exp2))
         binding.homeBannerVp.adapter = bannerAdapter
         binding.homeBannerVp.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
         return binding.root
     }
+
+    private fun changeAlbumFragment(album: Album) {
+        (context as MainActivity).supportFragmentManager.beginTransaction()
+            .replace(R.id.main_frm, AlbumFragment().apply {
+                arguments = Bundle().apply {
+                    val gson = Gson()
+                    val albumJson = gson.toJson(album)
+                    putString("album", albumJson)
+                }
+            })
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+
 }

@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.navigation.NavigationBarView
+import com.google.gson.Gson
+import com.umc.myapplication.data.db.SongDatabase
 import com.umc.myapplication.databinding.ActivityMainBinding
 import com.umc.myapplication.fragment.HomeFragment
 import com.umc.myapplication.fragment.LockerFragment
@@ -27,18 +29,15 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        const val RESULT_ALBUM_TITLE = "result_album_title"
-    }
+    lateinit var binding: ActivityMainBinding
 
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var songResultLauncher: ActivityResultLauncher<Intent>
+    private var song:Song = Song()
+    private var gson: Gson = Gson()
 
     // MusicService 바인딩
     private var musicService: MusicService? = null
     private var bound = false
     private var miniSeekJob: Job? = null
-
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as MusicService.MusicBinder
@@ -49,9 +48,6 @@ class MainActivity : AppCompatActivity() {
             runCatching {
                 val title = musicService?.getCurrentTitle().orEmpty()
                 val artist = musicService?.getCurrentArtist().orEmpty()
-                if (title.isNotBlank() || artist.isNotBlank()) {
-                    updateMiniPlayer(title, artist)
-                }
             }
         }
 
@@ -63,84 +59,100 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-         installSplashScreen()
-         Thread.sleep(3000)
-
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_FLO)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        songResultLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val albumTitle = result.data?.getStringExtra(RESULT_ALBUM_TITLE)
-                if (!albumTitle.isNullOrBlank()) {
-                    Toast.makeText(this, "선택한 앨범: $albumTitle", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        // 미니플레이어 클릭 → SongActivity 이동
-        binding.mainPlayerCl.setOnClickListener {
-            val intent = Intent(this, SongActivity::class.java).apply {
-                putExtra("title",  binding.miniSongTitleTv.text?.toString() ?: "")
-                putExtra("singer", binding.miniSongArtistTv.text?.toString() ?: "")
-            }
-            songResultLauncher.launch(intent)
-        }
-
+        inputDummySongs()
+        inputDummyAlbums()
         initBottomNavigation()
+
+        binding.mainPlayerCl.setOnClickListener {
+            val editor = getSharedPreferences("song", MODE_PRIVATE).edit()
+            editor.putInt("songId",song.id)
+            editor.apply()
+
+            val intent = Intent(this,SongActivity::class.java)
+            startActivity(intent)
+        }
+
         if (savedInstanceState == null) {
             binding.mainBnv.selectedItemId = R.id.homeFragment
         }
+
     }
 
     override fun onStart() {
         super.onStart()
-        Intent(this, MusicService::class.java).also {
-            bindService(it, connection, Context.BIND_AUTO_CREATE)
+        val spf = getSharedPreferences("song", MODE_PRIVATE)
+        val songId = spf.getInt("songId",0)
+
+        val songDB = SongDatabase.getInstance(this)!!
+
+        song = if (songId == 0){
+            songDB.songDao().getSong(1)
+        } else{
+            songDB.songDao().getSong(songId)
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        miniSeekJob?.cancel()
-        if (bound) {
-            unbindService(connection)
-            bound = false
-        }
-    }
-
-    private fun initBottomNavigation() {
-        binding.mainBnv.setOnItemSelectedListener(onNavSelected)
-    }
-
-    private val onNavSelected = NavigationBarView.OnItemSelectedListener { item ->
-        val fragment = when (item.itemId) {
-            R.id.homeFragment   -> HomeFragment()
-            R.id.lookFragment   -> LookFragment()
-            R.id.searchFragment -> SearchFragment()
-            R.id.lockerFragment -> LockerFragment()
-            else -> return@OnItemSelectedListener false
-        }
+    private fun initBottomNavigation(){
 
         supportFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .replace(R.id.main_frm, fragment)
-            .commit()
+            .replace(R.id.main_frm, HomeFragment())
+            .commitAllowingStateLoss()
 
-        true
+        binding.mainBnv.setOnItemSelectedListener{ item ->
+            when (item.itemId) {
+
+                R.id.homeFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, HomeFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+
+                R.id.lookFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, LookFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+                R.id.searchFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, SearchFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+                R.id.lockerFragment -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.main_frm, LockerFragment())
+                        .commitAllowingStateLoss()
+                    return@setOnItemSelectedListener true
+                }
+            }
+            false
+        }
     }
 
-    /** 미니플레이어 라벨 업데이트 */
-    fun updateMiniPlayer(title: String, artist: String) {
+    fun updateMiniPlayer(song : Song){
         binding.mainPlayerCl.visibility = View.VISIBLE
-        binding.miniSongTitleTv.text = title
-        binding.miniSongArtistTv.text = artist
+        binding.miniSongTitleTv.text = song.title
+        binding.miniSongArtistTv.text = song.singer
+
+        val progress = if (song.playTime > 0) {
+            (song.second * 100000) / song.playTime
+        } else {
+            0
+        }
+        binding.mainMiniplayerProgressSb.progress = progress
+
+        // 현재 곡 저장
+        this.song = song
     }
 
-    /** 서비스의 position/duration을 읽어와 미니 SeekBar 동기화 */
+    // 서비스와 position/duration을 읽어와 미니 SeekBar 동기화
     private fun startMiniSeekbarSync() {
         miniSeekJob?.cancel()
         miniSeekJob = lifecycleScope.launch {
@@ -162,9 +174,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /** 미니 SeekBar 드래그 → 서비스 seekTo로 반영 */
+    // 미니 SeekBar 드래그 -> 서비스 SeekTo로 반영
     private fun attachMiniSeekbarListener() {
-        // ⚠️ miniSongSeekBar는 네 레이아웃의 실제 ID로
         binding.mainMiniplayerProgressSb.setOnSeekBarChangeListener(
             object : android.widget.SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
@@ -178,5 +189,136 @@ class MainActivity : AppCompatActivity() {
                 override fun onStopTrackingTouch(sb: android.widget.SeekBar?) {}
             }
         )
+    }
+
+    private fun inputDummySongs() {
+        val songDB = SongDatabase.getInstance(this)!!
+        val songs = songDB.songDao().getSongs()
+
+        if (songs.isNotEmpty()) return
+
+        songDB.songDao().insert(
+            Song(
+                "Lilac",
+                "아이유 (IU)",
+                0,
+                200,
+                false,
+                "music_lilac",
+                R.drawable.img_album_exp2,
+                false,
+            )
+        )
+
+        songDB.songDao().insert(
+            Song(
+                "Flu",
+                "아이유 (IU)",
+                0,
+                200,
+                false,
+                "music_flu",
+                R.drawable.img_album_exp2,
+                false,
+            )
+        )
+
+        songDB.songDao().insert(
+            Song(
+                "Butter",
+                "방탄소년단 (BTS)",
+                0,
+                190,
+                false,
+                "music_butter",
+                R.drawable.img_album_exp,
+                false,
+            )
+        )
+
+        songDB.songDao().insert(
+            Song(
+                "Next Level",
+                "에스파 (AESPA)",
+                0,
+                210,
+                false,
+                "music_next",
+                R.drawable.img_album_exp3,
+                false,
+            )
+        )
+
+
+        songDB.songDao().insert(
+            Song(
+                "Boy with Luv",
+                "music_boy",
+                0,
+                230,
+                false,
+                "music_lilac",
+                R.drawable.img_album_exp4,
+                false,
+            )
+        )
+
+
+        songDB.songDao().insert(
+            Song(
+                "BBoom BBoom",
+                "모모랜드 (MOMOLAND)",
+                0,
+                240,
+                false,
+                "music_bboom",
+                R.drawable.img_album_exp5,
+                false,
+            )
+        )
+    }
+
+    //ROOM_DB
+    private fun inputDummyAlbums() {
+        val songDB = SongDatabase.getInstance(this)!!
+        val albums = songDB.albumDao().getAlbums()
+
+        if (albums.isNotEmpty()) return
+
+        songDB.albumDao().insert(
+            Album(
+                0,
+                "IU 5th Album 'LILAC'", "아이유 (IU)", R.drawable.img_album_exp2
+            )
+        )
+
+        songDB.albumDao().insert(
+            Album(
+                1,
+                "Butter", "방탄소년단 (BTS)", R.drawable.img_album_exp
+            )
+        )
+
+        songDB.albumDao().insert(
+            Album(
+                2,
+                "iScreaM Vol.10 : Next Level Remixes", "에스파 (AESPA)", R.drawable.img_album_exp3
+            )
+        )
+
+        songDB.albumDao().insert(
+            Album(
+                3,
+                "MAP OF THE SOUL : PERSONA", "방탄소년단 (BTS)", R.drawable.img_album_exp4
+            )
+        )
+
+        songDB.albumDao().insert(
+            Album(
+                4,
+                "GREAT!", "모모랜드 (MOMOLAND)", R.drawable.img_album_exp5
+            )
+        )
+
     }
 }
