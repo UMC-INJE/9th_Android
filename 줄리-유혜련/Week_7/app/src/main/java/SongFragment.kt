@@ -47,12 +47,12 @@ class SongFragment : Fragment() {
 
         // 더미 데이터
         val tracks = listOf(
-            Song(id = 1, title = "라일락", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 2, title = "Flu", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 3, title = "Coin", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 4, title = "봄 안녕 봄", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 5, title = "Celebrity", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
-            Song(id = 6, title = "돌림노래 (Feat. DEAN)", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2)
+            Song(title = "라일락", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
+            Song(title = "Flu", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
+            Song(title = "Coin", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
+            Song(title = "봄 안녕 봄", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
+            Song(title = "Celebrity", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2),
+            Song(title = "돌림노래 (Feat. DEAN)", singer = "아이유 (IU)", coverImg = R.drawable.img_album_exp2)
         )
 
         // 어댑터에 데이터 전달
