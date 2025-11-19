@@ -99,7 +99,9 @@ class SignUpFragment : Fragment() {
                 buttonText = "계정만들기",
                 onClick = {
                     //viewModel값 로그인 통신 넘기기
+                    viewModel.signUp()
                     navController.navigate(R.id.action_UserInfoFragment_to_EmptyFragment)
+
                 }
             ),
             R.id.EmptyFragment to AuthScreenUiConfig(

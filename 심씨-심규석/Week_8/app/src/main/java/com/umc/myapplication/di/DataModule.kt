@@ -1,8 +1,14 @@
 package com.umc.myapplication.di
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.umc.myapplication.data.CategoryRepository
 import com.umc.myapplication.data.ProductRepository
+import com.umc.myapplication.data.auth.FirebaseAuthRepository
+import com.umc.myapplication.domain.auth.AuthRepository
+import com.umc.myapplication.domain.auth.SignInWithEmailUseCase
+import com.umc.myapplication.domain.auth.SignUpWithEmailUseCase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,11 +18,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class DataModule {
+
+    // Realtime Database
     @Provides
     @Singleton
-    fun provideFirebaseDatabase(): FirebaseDatabase {
-        return FirebaseDatabase.getInstance()
-    }
+    fun provideFirebaseDatabase(): FirebaseDatabase =
+        FirebaseDatabase.getInstance()
 
     @Provides
     @Singleton
@@ -28,5 +35,22 @@ class DataModule {
     fun provideCategoryRepository(db: FirebaseDatabase): CategoryRepository =
         CategoryRepository(db)
 
+    // Firebase Auth
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth =
+        FirebaseAuth.getInstance() // 기본 인스턴스 제공 [web:53]
 
+    @Provides
+    @Singleton
+    fun provideAuthRepository(auth: FirebaseAuth): AuthRepository =
+        FirebaseAuthRepository(auth) // 데이터 계층 구현체 바인딩 [web:54]
+
+    @Provides
+    fun provideSignUpWithEmailUseCase(repo: AuthRepository): SignUpWithEmailUseCase =
+        SignUpWithEmailUseCase(repo)
+
+    @Provides
+    fun provideSignInWithEmailUseCase(repo: AuthRepository): SignInWithEmailUseCase =
+        SignInWithEmailUseCase(repo)
 }

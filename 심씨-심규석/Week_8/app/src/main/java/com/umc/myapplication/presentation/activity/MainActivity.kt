@@ -15,9 +15,11 @@ import com.umc.myapplication.databinding.ActivityMainBinding
 import com.umc.myapplication.presentation.feature.AuthViewModel
 import com.umc.myapplication.presentation.feature.UiProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(
+) {
 
     private val viewModel by viewModels<AuthViewModel>()
     private val uiViewModel: UiProductViewModel by viewModels()
@@ -30,9 +32,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //테스트 데이터 업데이트
-        uiViewModel.upsertProductList(testProductRepository.products)
-        uiViewModel.loadOnce()
-
+//        uiViewModel.upsertProductList(testProductRepository.products)
+//        uiViewModel.loadOnce()
+        //현재 사용자
+        viewModel.refreshCurrentUser()
+        //로그아웃
+        //viewModel.logOut()
 
         //FragmentContainerView에 연결된 NavController
         val navHostFragment = supportFragmentManager
