@@ -86,6 +86,12 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 uiViewModel.loadOnce()
+                //테스트 영역
+//                testProductRepository.userLikedProductIds.forEach {
+//                    uiViewModel.upsertLiked(it)
+//                }
+
+
                 uiViewModel.state.collect { s ->
                     Log.d("state", s.toString())
                     when (s) {

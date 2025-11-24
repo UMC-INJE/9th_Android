@@ -33,12 +33,13 @@ class MainActivity : AppCompatActivity(
 
         //테스트 데이터 업데이트
 //        uiViewModel.upsertProductList(testProductRepository.products)
-//        uiViewModel.loadOnce()
-        //현재 사용자
-        viewModel.refreshCurrentUser()
+//        uiViewModel.upsertCategorieList(testProductRepository.categories)
         //로그아웃
         //viewModel.logOut()
 
+
+        //자동로그인
+        viewModel.refreshCurrentUser()
         //FragmentContainerView에 연결된 NavController
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragmentContainerView) as NavHostFragment
