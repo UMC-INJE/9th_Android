@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.umc.myapplication.data.CategoryRepository
 import com.umc.myapplication.data.ProductRepository
+import com.umc.myapplication.data.UserLikedRepository
 import com.umc.myapplication.data.models.Category
 import com.umc.myapplication.data.models.Product
 import com.umc.myapplication.data.models.toUiProducts
@@ -28,31 +29,30 @@ sealed interface UiProductState {
 @HiltViewModel
 class UiProductViewModel @Inject constructor(
     private val productRepository: ProductRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val userLikedRepository: UserLikedRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<UiProductState>(UiProductState.Idle)
     val state: StateFlow<UiProductState> = _state.asStateFlow()
 
-    fun loadOnce()  = runWithState(
+    fun loadOnce() = runWithState(
         block = {
-            val data = fetchProductsAndCategories()
-            Log.d("firebase", "loadOnce: "+data)
-                data},
-        onMapToState = { (products, categoryMap) ->
-            val uiProducts = products.toUiProducts(categoryMap)
+            fetchProductsCategoriesAndLikes()
+        },
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
             if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
         }
-
     )
 
     fun upsertProduct(productId: Int, product: Product) = runWithState(
         block = {
             productRepository.upsertProduct(productId, product)
-            fetchProductsAndCategories()
+            fetchProductsCategoriesAndLikes()
         },
-        onMapToState = { (products, categoryMap) ->
-            val uiProducts = products.toUiProducts(categoryMap)
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
             if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
         }
     )
@@ -60,20 +60,21 @@ class UiProductViewModel @Inject constructor(
     fun upsertProductList(items: List<Product>) = runWithState(
         block = {
             productRepository.upsertProductList(items)
-            fetchProductsAndCategories()
+            fetchProductsCategoriesAndLikes()
         },
-        onMapToState = { (products, categoryMap) ->
-            val uiProducts = products.toUiProducts(categoryMap)
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
             if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
         }
     )
+
     fun upsertIsLiked(productId: Int, isLiked: Boolean) = runWithState(
         block = {
-            productRepository.upsertIsLiked(productId, isLiked)
-            fetchProductsAndCategories()
+            userLikedRepository.addLike(productId)
+            fetchProductsCategoriesAndLikes()
         },
-        onMapToState = { (products, categoryMap) ->
-            val uiProducts = products.toUiProducts(categoryMap)
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
             if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
         }
     )
@@ -81,41 +82,59 @@ class UiProductViewModel @Inject constructor(
     fun deleteProduct(productId: Int) = runWithState(
         block = {
             productRepository.deleteProduct(productId)
-            fetchProductsAndCategories()
+            fetchProductsCategoriesAndLikes()
         },
-        onMapToState = { (products, categoryMap) ->
-            val uiProducts = products.toUiProducts(categoryMap)
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
             if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
         }
-
     )
 
     fun upsertCategory(categoryId: Int, category: Category) = runWithState(
         block = {
             categoryRepository.upsertCategory(categoryId, category)
-            fetchProductsAndCategories()
+            fetchProductsCategoriesAndLikes()
         },
-        onMapToState = { (products, categoryMap) ->
-            val uiProducts = products.toUiProducts(categoryMap)
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
             if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
         }
-
     )
 
     fun upsertCategorieList(items: List<Category>) = runWithState(
         block = {
             categoryRepository.upsertCategoryList(items)
-            fetchProductsAndCategories()
+            fetchProductsCategoriesAndLikes()
         },
-        onMapToState = { (products, categoryMap) ->
-            val uiProducts = products.toUiProducts(categoryMap)
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
             if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
         }
-
     )
 
-    //로딩, 에러처리 자동화
-    //실행할 것, 실행완료후 데이터 처리넣을 것
+    fun upsertLiked(productId: Int) = runWithState(
+        block = {
+            userLikedRepository.addLike(productId)
+            fetchProductsCategoriesAndLikes()
+        },
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
+            if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
+        }
+    )
+
+    fun deleteLiked(productId: Int) = runWithState(
+        block = {
+            userLikedRepository.removeLike(productId)
+            fetchProductsCategoriesAndLikes()
+        },
+        onMapToState = { (products, categoryMap, likedProductIds) ->
+            val uiProducts = products.toUiProducts(categoryMap, likedProductIds)
+            if (uiProducts.isNotEmpty()) UiProductState.Data(uiProducts) else UiProductState.Empty
+        }
+    )
+
+
     private inline fun <T> runWithState(
         crossinline block: suspend () -> T,
         crossinline onMapToState: (T) -> UiProductState
@@ -127,8 +146,9 @@ class UiProductViewModel @Inject constructor(
         } catch (e: Exception) {
             _state.value = UiProductState.Error(e.message ?: "Unknown error")
         }
-        // finally에서 Idle로 덮어쓰지 않기: 성공/에러가 바로 사라지는 문제 방지
     }
+
+    // id로 단일 UiProduct 반환, 없으면 null
     fun getUiProductById(id: Int): UiProduct? {
         val s = state.value
         Log.d("uiVM", "getUiProductById: $s")
@@ -136,13 +156,17 @@ class UiProductViewModel @Inject constructor(
         return if (s is UiProductState.Data) s.products.firstOrNull { it.id == id } else null
     }
 
-
-    private suspend fun fetchProductsAndCategories(): Pair<List<Product>, Map<Int, Category>> =
+    // 상품, 카테고리, userLiked 동시 조회
+    private suspend fun fetchProductsCategoriesAndLikes(): Triple<List<Product>, Map<Int, Category>, Set<Int>> =
         kotlinx.coroutines.coroutineScope {
             val productsDef = async { productRepository.fetchProductsOnce() }
             val categoriesDef = async { categoryRepository.fetchCategorysOnce() }
+            val likesDef = async { userLikedRepository.fetchLikedProductIds() }
+
             val products = productsDef.await()
             val categoryMap = categoriesDef.await().associateBy { it.id }
-            products to categoryMap
+            val likedProductIds = likesDef.await()
+
+            Triple(products, categoryMap, likedProductIds)
         }
 }
