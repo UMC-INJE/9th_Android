@@ -10,7 +10,6 @@ object testProductRepository {
             id = 1,
             imageResource = R.drawable.img_search_item1,
             name = "Nike Everyday Plus Cushioned",
-            liked = true,
             shortDescription = "Training Ankle Socks (6 Pairs)",
             description = "The Nike Everyday Plus Cushioned Socks bring comfort to your workout with extra cushioning under the heel and forefoot and a snug, supportive arch band. Sweat-wicking power and breathability up top help keep your feet dry and cool to help push you through that extra set.",
             price = 10,
@@ -25,7 +24,6 @@ object testProductRepository {
             id = 2,
             imageResource = R.drawable.img_search_item1,
             name = "Nike Everyday Plus Cushioned",
-            liked = false,
             shortDescription = "Training Ankle Socks (6 Pairs)",
             description = "Designed for high-intensity training, these socks offer cushioning and breathability for all-day comfort. The moisture-wicking fabric keeps your feet dry and prevents odor buildup.",
             colors = 3,
@@ -41,7 +39,6 @@ object testProductRepository {
             id = 3,
             imageResource = R.drawable.img_home_new_product1,
             name = "Air Jordan XXXVI",
-            liked = false,
             shortDescription = "Lightweight Basketball Shoes",
             description = "Inspired by the legacy of flight, Air Jordan XXXVI features ultra-lightweight material and responsive cushioning for explosive plays on the court. The multidirectional traction pattern provides superior grip.",
             colors = 3,
@@ -57,7 +54,6 @@ object testProductRepository {
             id = 4,
             imageResource = R.drawable.img_home_new_product2,
             name = "Nike Air Force 1 '07",
-            liked = false,
             shortDescription = "Classic Everyday Sneaker",
             description = "The Nike Air Force 1 '07 updates the iconic shoe with crisp synthetic leather, bold accents, and legendary cushioning for day-long comfort. A timeless look for any style.",
             colors = 3,
@@ -73,7 +69,6 @@ object testProductRepository {
             id = 5,
             imageResource = R.drawable.img_home_new_product2,
             name = "Nike Air Force 1 '07",
-            liked = false,
             shortDescription = "Classic Everyday Sneaker",
             description = "The Nike Air Force 1 '07 updates the iconic shoe with crisp synthetic leather, bold accents, and legendary cushioning for day-long comfort. A timeless look for any style.",
             colors = 3,
@@ -92,5 +87,6 @@ object testProductRepository {
         Category(id = 3, name = "Men's Basketball Shoes"),
         Category(id = 4, name = "Lifestyle Shoes"),
     )
+    val userLikedProductIds = setOf(1, 3)
 
 }
