@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.umc.myapplication.data.CategoryRepository
 import com.umc.myapplication.data.ProductRepository
+import com.umc.myapplication.data.UserLikedRepository
 import com.umc.myapplication.data.auth.FirebaseAuthRepository
 import com.umc.myapplication.domain.auth.AuthRepository
 import com.umc.myapplication.domain.auth.SignInWithEmailUseCase
@@ -29,7 +30,11 @@ class DataModule {
     @Singleton
     fun provideProductRepository(db: FirebaseDatabase): ProductRepository =
         ProductRepository(db)
-
+    @Provides
+    fun provideUserLikedRepository(
+        db: FirebaseDatabase,
+        auth: FirebaseAuth
+    ): UserLikedRepository = UserLikedRepository(db, auth)
     @Provides
     @Singleton
     fun provideCategoryRepository(db: FirebaseDatabase): CategoryRepository =
