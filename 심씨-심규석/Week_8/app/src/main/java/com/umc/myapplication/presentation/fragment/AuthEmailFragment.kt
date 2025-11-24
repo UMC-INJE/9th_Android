@@ -13,6 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.umc.myapplication.R
 import com.umc.myapplication.databinding.FragmentAuthEmailBinding
 import com.umc.myapplication.presentation.feature.AuthViewModel
+import com.umc.myapplication.presentation.utils.isValidEmail
 import com.umc.myapplication.presentation.utils.setUnderlinedSpannable
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -47,9 +48,11 @@ class AuthEmailFragment : Fragment() {
             textColor = R.color.gray600
         )
 
-        // 입력 변경 → ViewModel에 상태만 전달
         binding.emailInputLayout.editText?.doOnTextChanged { text, _, _, _ ->
-            viewModel.updateEmail(text?.toString().orEmpty())
+            val email = text?.toString().orEmpty()
+            viewModel.updateEmail(email)
+            val isValid = isValidEmail(email)
+            viewModel.setButtonEnabled(isValid)
         }
 
 

@@ -86,7 +86,11 @@ class ProductDetailFragment : Fragment() {
         binding.wishListButton.setOnClickListener {
             val toggled = !item.liked
             binding.wishListIcon.setWishIcon(isWish = toggled)
-            uiViewModel.upsertIsLiked(item.id, toggled)
+            if(toggled)
+                uiViewModel.upsertLiked(item.id)
+            else
+                uiViewModel.deleteLiked(item.id)
+
         }
         binding.backButton.setOnClickListener {
             findNavController().popBackStack()

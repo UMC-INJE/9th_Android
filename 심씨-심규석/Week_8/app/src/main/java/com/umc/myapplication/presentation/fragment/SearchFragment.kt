@@ -44,7 +44,10 @@ class SearchFragment : Fragment() {
             },
             onToggleWish = {
                 Log.d("searchFragment", "onCreateView: ${it.liked}")
-                uiViewModel.upsertIsLiked(it.id, !it.liked)
+                if(it.liked)
+                    uiViewModel.deleteLiked(it.id)
+                else
+                    uiViewModel.upsertLiked(it.id)
             }
         )
         binding.recycler.adapter = adapter

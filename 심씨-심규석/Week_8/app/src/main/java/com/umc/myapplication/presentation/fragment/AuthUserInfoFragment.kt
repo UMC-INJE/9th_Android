@@ -49,6 +49,7 @@ class AuthUserInfoFragment : Fragment() {
 
     // ... setupPasswordRules, setupPrivacyPolicy 동일
 
+    //리스너 다는 함수? 로직
     private fun setupInputListeners() = with(binding) {
         passwordInputLayout.editText?.doOnTextChanged { text, _, _, _ ->
             val pw = text?.toString().orEmpty()
@@ -73,7 +74,6 @@ class AuthUserInfoFragment : Fragment() {
             localFirstNameValid = s.isNotBlank()
             updateStartButtonEnabled()
         }
-
         lastNameLayout.editText?.doOnTextChanged { text, _, _, _ ->
             val s = text?.toString().orEmpty()
             viewModel.updateLastName(s)
