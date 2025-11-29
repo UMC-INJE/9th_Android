@@ -17,7 +17,6 @@ import com.umc.myapplication.presentation.feature.UiProductState
 import com.umc.myapplication.presentation.feature.UiProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.math.hypot
 
 @AndroidEntryPoint
 class WishListFragment : Fragment() {
@@ -56,7 +55,6 @@ class WishListFragment : Fragment() {
                 }
             }
         }
-
         return binding.root
     }
 
