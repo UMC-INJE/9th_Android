@@ -1,6 +1,7 @@
 package com.umc.myapplication.presentation.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -9,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.umc.myapplication.BuildConfig
 import com.umc.myapplication.R
 import com.umc.myapplication.data.mock.testProductRepository
 import com.umc.myapplication.databinding.ActivityMainBinding
@@ -20,7 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(
 ) {
-
+    private val TAG = "MainActivity"
     private val viewModel by viewModels<AuthViewModel>()
     private val uiViewModel: UiProductViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
@@ -35,8 +37,9 @@ class MainActivity : AppCompatActivity(
 //        uiViewModel.upsertProductList(testProductRepository.products)
 //        uiViewModel.upsertCategorieList(testProductRepository.categories)
         //로그아웃
-        viewModel.logOut()
+        //viewModel.logOut()
 
+        Log.d(TAG, "onCreate: ${BuildConfig.SERVER_URL}")
 
         //자동로그인
         viewModel.refreshCurrentUser()

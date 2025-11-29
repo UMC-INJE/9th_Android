@@ -110,7 +110,7 @@ class AuthViewModel @Inject constructor(
             result.fold(
                 onSuccess = { user ->
                     _signedInUser.value = user
-                    _userId.value = user.uid
+                    _userId.value = user.accessToken
                 },
                 onFailure = { e ->
                     _signInError.value = e.localizedMessage ?: "로그인에 실패했습니다."
@@ -147,7 +147,7 @@ class AuthViewModel @Inject constructor(
             result.fold(
                 onSuccess = { user ->
                     _signedUpUser.value = user
-                    _userId.value = user.uid
+                    _userId.value = user.accessToken
                 },
                 onFailure = { e ->
                     _signUpError.value = e.localizedMessage ?: "회원가입에 실패했습니다."

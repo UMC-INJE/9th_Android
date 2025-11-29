@@ -16,7 +16,9 @@ class FirebaseAuthRepository(
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val u = auth.currentUser
-                        cont.resume(Result.success(User(u?.uid.orEmpty(), u?.email)))
+                        cont.resume(Result.success(User(
+                            accessToken = u?.uid.orEmpty(),
+                        )))
                     } else {
                         cont.resume(Result.failure(task.exception ?: Exception("SignUp failed")))
                     }
@@ -31,7 +33,7 @@ class FirebaseAuthRepository(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val u = auth.currentUser
-                    cont.resume(Result.success(User(u?.uid.orEmpty(), u?.email)))
+                    cont.resume(Result.success(User(accessToken = u?.uid.orEmpty())))
                 } else {
                     cont.resume(Result.failure(task.exception ?: Exception("SignIn failed")))
                 }
