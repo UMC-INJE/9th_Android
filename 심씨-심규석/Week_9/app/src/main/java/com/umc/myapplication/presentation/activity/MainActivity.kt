@@ -12,12 +12,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.umc.myapplication.BuildConfig
 import com.umc.myapplication.R
-import com.umc.myapplication.data.mock.testProductRepository
 import com.umc.myapplication.databinding.ActivityMainBinding
 import com.umc.myapplication.presentation.feature.AuthViewModel
 import com.umc.myapplication.presentation.feature.UiProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(
@@ -49,7 +47,7 @@ class MainActivity : AppCompatActivity(
         val navController = navHostFragment.navController
 
         // userId 변화에 따라 그래프/네비게이션 전환
-        viewModel.userId.observe(this) { id ->
+        viewModel.accessToken.observe(this) { id ->
             if (id.isNullOrEmpty()) {
                 // 비로그인: 웰컴 그래프 로드, BottomNav 숨김
                 navController.setGraph(R.navigation.nav_graph_welcome)

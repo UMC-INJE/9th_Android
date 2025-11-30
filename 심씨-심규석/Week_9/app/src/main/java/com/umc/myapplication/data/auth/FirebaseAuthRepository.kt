@@ -1,6 +1,8 @@
 package com.umc.myapplication.data.auth
 
 import com.google.firebase.auth.FirebaseAuth
+import com.umc.myapplication.data.models.request.SignInRequest
+import com.umc.myapplication.data.models.request.SignUpRequest
 import com.umc.myapplication.domain.auth.AuthRepository
 import com.umc.myapplication.domain.model.User
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -10,9 +12,9 @@ class FirebaseAuthRepository(
     private val auth: FirebaseAuth
 ) : AuthRepository {
 
-    override suspend fun signUpWithEmail(email: String, password: String): Result<User> =
+    override suspend fun signUpWithEmail(form: SignUpRequest): Result<User> =
         suspendCancellableCoroutine { cont ->
-            auth.createUserWithEmailAndPassword(email, password)
+            auth.createUserWithEmailAndPassword(form.email, form.password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val u = auth.currentUser
@@ -26,10 +28,9 @@ class FirebaseAuthRepository(
         }
 
     override suspend fun signInWithEmail(
-        email: String,
-        password: String
+        form: SignInRequest
     ): Result<User> = suspendCancellableCoroutine { cont ->
-        auth.signInWithEmailAndPassword(email, password)
+        auth.signInWithEmailAndPassword(form.email, form.password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val u = auth.currentUser
@@ -39,7 +40,6 @@ class FirebaseAuthRepository(
                 }
             }
     }
-
     override suspend fun signOut(): Result<Unit> {
         return try {
             auth.signOut() // 현재 사용자 세션 해제
@@ -47,5 +47,12 @@ class FirebaseAuthRepository(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    override fun getCurrentUser(): User {
+        val auth = auth.currentUser
+        return User(
+            accessToken = auth?.uid
+        )
     }
 }
