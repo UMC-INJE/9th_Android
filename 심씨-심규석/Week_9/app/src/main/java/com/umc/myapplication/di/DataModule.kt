@@ -33,7 +33,7 @@ class DataModule {
     @Provides
     fun provideUserLikedRepository(
         db: FirebaseDatabase,
-        auth: FirebaseAuth
+        auth: AuthRepository
     ): UserLikedRepository = UserLikedRepository(db, auth)
     @Provides
     @Singleton
@@ -46,10 +46,6 @@ class DataModule {
     fun provideFirebaseAuth(): FirebaseAuth =
         FirebaseAuth.getInstance() // 기본 인스턴스 제공 [web:53]
 
-    @Provides
-    @Singleton
-    fun provideAuthRepository(auth: FirebaseAuth): AuthRepository =
-        FirebaseAuthRepository(auth) // 데이터 계층 구현체 바인딩 [web:54]
 
     @Provides
     fun provideSignUpWithEmailUseCase(repo: AuthRepository): SignUpWithEmailUseCase =

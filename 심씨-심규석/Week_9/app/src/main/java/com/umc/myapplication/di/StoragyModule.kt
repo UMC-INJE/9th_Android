@@ -3,6 +3,8 @@ package com.umc.myapplication.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.umc.myapplication.data.CartRepository
+import com.umc.myapplication.data.session.PrefsSessionStorage
+import com.umc.myapplication.domain.session.SessionStorage
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -26,4 +28,13 @@ object PrefsModule {
         @ApplicationContext context: Context
     ): SharedPreferences =
         context.getSharedPreferences("com.umc.myapplication.cart.prefs", Context.MODE_PRIVATE)
+    @Provides
+    @Singleton
+    fun provideSessionStorage(
+        prefs: SharedPreferences
+    ): SessionStorage {
+        return PrefsSessionStorage(prefs)
+    }
+
+
 }
