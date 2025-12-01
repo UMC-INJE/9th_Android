@@ -32,12 +32,14 @@ class UiProductViewModel @Inject constructor(
     private val categoryRepository: CategoryRepository,
     private val userLikedRepository: UserLikedRepository
 ) : ViewModel() {
-
+    private val TAG = "UiProductViewModel"
     private val _state = MutableStateFlow<UiProductState>(UiProductState.Idle)
     val state: StateFlow<UiProductState> = _state.asStateFlow()
 
     fun loadOnce() = runWithState(
+        
         block = {
+            Log.d(TAG, "loadOnce: loadOnce")
             fetchProductsCategoriesAndLikes()
         },
         onMapToState = { (products, categoryMap, likedProductIds) ->

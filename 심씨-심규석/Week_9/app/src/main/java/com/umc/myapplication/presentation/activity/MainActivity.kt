@@ -12,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.umc.myapplication.BuildConfig
 import com.umc.myapplication.R
+import com.umc.myapplication.data.mock.testProductRepository
 import com.umc.myapplication.databinding.ActivityMainBinding
 import com.umc.myapplication.presentation.feature.AuthViewModel
 import com.umc.myapplication.presentation.feature.UiProductViewModel
@@ -32,8 +33,8 @@ class MainActivity : AppCompatActivity(
         setContentView(binding.root)
 
         //테스트 데이터 업데이트
-//        uiViewModel.upsertProductList(testProductRepository.products)
-//        uiViewModel.upsertCategorieList(testProductRepository.categories)
+        uiViewModel.upsertProductList(testProductRepository.products)
+        uiViewModel.upsertCategorieList(testProductRepository.categories)
         //로그아웃
         //viewModel.logOut()
 

@@ -64,6 +64,7 @@ class RetrofitAuthRepository @Inject constructor(
 
     override fun getCurrentUser(): User? {
         // 앱 시작 시 / 화면 진입 시 현재 로그인 유저 가져올 때 사용
+        //refresh-access라면 로그인 로직 넣을 것
         return sessionStorage.getUser()
     }
 }
