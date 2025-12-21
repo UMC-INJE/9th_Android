@@ -1,5 +1,6 @@
 package com.umc.myapplication.presentation.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.common.util.Utility
 import com.umc.myapplication.BuildConfig
 import com.umc.myapplication.R
 import com.umc.myapplication.data.mock.testProductRepository
@@ -29,6 +32,8 @@ class MainActivity : AppCompatActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        KakaoSdk.init(this, BuildConfig.KAKAO_API_KEY)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -37,8 +42,6 @@ class MainActivity : AppCompatActivity(
         uiViewModel.upsertCategorieList(testProductRepository.categories)
         //로그아웃
         //viewModel.logOut()
-
-        Log.d(TAG, "onCreate: ${BuildConfig.SERVER_URL}")
 
         //자동로그인
         viewModel.refreshCurrentUser()
