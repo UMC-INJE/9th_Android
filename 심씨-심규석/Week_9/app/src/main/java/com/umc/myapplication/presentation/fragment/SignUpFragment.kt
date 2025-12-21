@@ -11,13 +11,16 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.umc.myapplication.R
 import com.umc.myapplication.databinding.FragmentAuthBinding
 import com.umc.myapplication.domain.model.AuthScreenUiConfig
 import com.umc.myapplication.presentation.utils.applyUiForDestination
 import com.umc.myapplication.presentation.feature.AuthViewModel
+import kotlin.getValue
 
-class SignInFragment : Fragment() {
+class SignUpFragment : Fragment() {
+
 
     // ViewModel & ViewBinding
     private val viewModel by activityViewModels<AuthViewModel>()
@@ -88,22 +91,25 @@ class SignInFragment : Fragment() {
                         "이메일을 입력하세요",
                 buttonText = "다음",
                 onClick = {
-                    navController.navigate(R.id.action_Email_to_PassWard)
+                    navController.navigate(R.id.action_EmailFragment_to_UserInfoFragment)
                     viewModel.setButtonEnabled(false)}
             ),
-            R.id.PassWordFragment to AuthScreenUiConfig(
+            R.id.UserInfoFragment to AuthScreenUiConfig(
                 title = "이제 나이키 멤버가 되어볼까요?",
-                buttonText = "로그인",
+                buttonText = "계정만들기",
                 onClick = {
                     //viewModel값 로그인 통신 넘기기
-                    viewModel.signIn()
-                    navController.navigate(R.id.action_PassWordFragment_to_EmptyFragment)
+                    viewModel.signUp()
+                    navController.navigate(R.id.action_UserInfoFragment_to_EmptyFragment)
+
                 }
             ),
             R.id.EmptyFragment to AuthScreenUiConfig(
-                title = "성공적으로 로그인이 완료되었습니다.",
+                title = "성공적으로 회원가입이 완료되었습니다.",
                 buttonText = "계속",
                 onClick = {
+                    val directions = SignUpFragmentDirections.actionSignUpFragmentToWelcomeFragment()
+                    findNavController().navigate(directions)
                 }
             ),
             // 필요 시 목적지 추가
@@ -114,4 +120,5 @@ class SignInFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

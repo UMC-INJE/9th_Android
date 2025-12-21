@@ -1,6 +1,7 @@
 package com.umc.myapplication.presentation.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -9,18 +10,18 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.umc.myapplication.BuildConfig
 import com.umc.myapplication.R
 import com.umc.myapplication.data.mock.testProductRepository
 import com.umc.myapplication.databinding.ActivityMainBinding
 import com.umc.myapplication.presentation.feature.AuthViewModel
 import com.umc.myapplication.presentation.feature.UiProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(
 ) {
-
+    private val TAG = "MainActivity"
     private val viewModel by viewModels<AuthViewModel>()
     private val uiViewModel: UiProductViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
@@ -32,11 +33,12 @@ class MainActivity : AppCompatActivity(
         setContentView(binding.root)
 
         //테스트 데이터 업데이트
-//        uiViewModel.upsertProductList(testProductRepository.products)
-//        uiViewModel.upsertCategorieList(testProductRepository.categories)
+        uiViewModel.upsertProductList(testProductRepository.products)
+        uiViewModel.upsertCategorieList(testProductRepository.categories)
         //로그아웃
-        viewModel.logOut()
+        //viewModel.logOut()
 
+        Log.d(TAG, "onCreate: ${BuildConfig.SERVER_URL}")
 
         //자동로그인
         viewModel.refreshCurrentUser()
@@ -46,7 +48,7 @@ class MainActivity : AppCompatActivity(
         val navController = navHostFragment.navController
 
         // userId 변화에 따라 그래프/네비게이션 전환
-        viewModel.userId.observe(this) { id ->
+        viewModel.accessToken.observe(this) { id ->
             if (id.isNullOrEmpty()) {
                 // 비로그인: 웰컴 그래프 로드, BottomNav 숨김
                 navController.setGraph(R.navigation.nav_graph_welcome)

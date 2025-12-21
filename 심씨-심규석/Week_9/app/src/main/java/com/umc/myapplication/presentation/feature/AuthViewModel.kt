@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
+import com.umc.myapplication.data.models.request.SignInRequest
+import com.umc.myapplication.data.models.request.SignUpRequest
+import com.umc.myapplication.domain.auth.AuthRepository
 import com.umc.myapplication.domain.auth.SignInWithEmailUseCase
 import com.umc.myapplication.domain.auth.SignUpWithEmailUseCase
 import com.umc.myapplication.domain.model.SignUpForm
@@ -20,7 +22,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val auth: FirebaseAuth,
+    private val authRepository: AuthRepository,
     private val signUpWithEmail: SignUpWithEmailUseCase,
     private val signInWithEmail: SignInWithEmailUseCase,
     private val signInValidator: SignInValidationUseCase,
@@ -30,8 +32,8 @@ class AuthViewModel @Inject constructor(
     private val _form = MutableLiveData(SignUpForm())
     val form: LiveData<SignUpForm> = _form
 
-    private val _userId = MutableLiveData<String?>(null)
-    val userId: LiveData<String?> = _userId
+    private val _accessToken = MutableLiveData<String?>(null)
+    val accessToken: LiveData<String?> = _accessToken
 
     private val _buttonEnabled = MutableLiveData(false)
     val buttonEnabled: LiveData<Boolean> = _buttonEnabled
@@ -52,22 +54,26 @@ class AuthViewModel @Inject constructor(
     val signedUpUser: LiveData<User?> = _signedUpUser
 
     init {
-        _userId.value = auth.currentUser?.uid
-        auth.addAuthStateListener { fa ->
-            _userId.postValue(fa.currentUser?.uid)
-        }
+        // 앱 켰을 때 이미 로그인돼 있으면 세팅
+        val currentUser = authRepository.getCurrentUser()
+        _accessToken.value = currentUser?.accessToken
     }
 
     fun refreshCurrentUser() {
-        _userId.value = auth.currentUser?.uid
+        val currentUser = authRepository.getCurrentUser()
+        _accessToken.value = currentUser?.accessToken
     }
 
     fun logOut() {
-        auth.signOut()
-        _userId.value = null
+        viewModelScope.launch {
+            authRepository.signOut()
+            _accessToken.value = null
+            _signedInUser.value = null
+            _signedUpUser.value = null
+        }
     }
 
-    fun setUserId(id: String) { _userId.value = id }
+    fun setUserId(id: String) { _accessToken.value = id }
 
     fun updateEmail(v: String) = update { copy(email = v) }
     fun updatePassword(v: String) = update { copy(password = v) }
@@ -105,12 +111,13 @@ class AuthViewModel @Inject constructor(
         _signedInUser.value = null
 
         viewModelScope.launch {
-            val result = signInWithEmail(email.trim(), password)
+            val form = SignInRequest(email = email.trim(), password = password)
+            val result = signInWithEmail(form = form)
             _loading.value = false
             result.fold(
                 onSuccess = { user ->
                     _signedInUser.value = user
-                    _userId.value = user.uid
+                    _accessToken.value = user.accessToken
                 },
                 onFailure = { e ->
                     _signInError.value = e.localizedMessage ?: "로그인에 실패했습니다."
@@ -142,12 +149,16 @@ class AuthViewModel @Inject constructor(
         _signedUpUser.value = null
 
         viewModelScope.launch {
-            val result = signUpWithEmail(current.email.trim(), current.password)
+            val form = SignUpRequest(
+                name = current.firstName + current.lastName,
+                email = current.email.trim(),
+                password = current.password)
+            val result = signUpWithEmail(form = form)
             _loading.value = false
             result.fold(
                 onSuccess = { user ->
                     _signedUpUser.value = user
-                    _userId.value = user.uid
+                    _accessToken.value = user.accessToken
                 },
                 onFailure = { e ->
                     _signUpError.value = e.localizedMessage ?: "회원가입에 실패했습니다."
