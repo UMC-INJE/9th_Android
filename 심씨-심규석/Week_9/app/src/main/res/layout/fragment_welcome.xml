@@ -36,6 +36,17 @@
             "무료 배송, 멤버 전용 상품,\n세상에 하나뿐인 나만의\n나이키를 즐겨보세요."
         />
 
+    <ImageView
+        android:id="@+id/kakaoLogin"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:srcCompat="@drawable/img_kakako"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        />
+
     <LinearLayout
         android:id="@+id/buttonLayout"
         android:layout_width="match_parent"
