@@ -1,5 +1,6 @@
 package com.umc.myapplication.di
 
+import com.umc.myapplication.data.auth.FirebaseAuthRepository
 import com.umc.myapplication.data.auth.RetrofitAuthRepository
 import com.umc.myapplication.domain.auth.AuthRepository
 import dagger.Binds
@@ -15,6 +16,6 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(
-        impl: RetrofitAuthRepository
+        impl: FirebaseAuthRepository
     ): AuthRepository
 }
