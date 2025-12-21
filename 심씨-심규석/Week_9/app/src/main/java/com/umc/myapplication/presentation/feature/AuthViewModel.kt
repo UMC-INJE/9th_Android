@@ -16,6 +16,7 @@ import com.umc.myapplication.domain.validation.SignInValidationUseCase
 import com.umc.myapplication.domain.validation.SignUpValidationUseCase
 import com.umc.myapplication.domain.validation.ValidationError
 import com.umc.myapplication.domain.validation.ValidationResult
+import com.umc.myapplication.util.KakaoLoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -164,6 +165,31 @@ class AuthViewModel @Inject constructor(
                     _signUpError.value = e.localizedMessage ?: "회원가입에 실패했습니다."
                 }
             )
+        }
+    }
+
+    fun signInWithKakao(result: KakaoLoginResult) {
+        _loading.value = true
+        _signInError.value = null
+        _signedInUser.value = null
+
+        viewModelScope.launch {
+            try {
+                val user = User(
+                    id = result.id?.toString() ?: "",
+                    name = result.nickname ?: "",
+                    email = result.email ?: "",
+                    accessToken = result.accessToken,
+                    profileUrl = result.profileImageUrl,
+                )
+
+                _signedInUser.value = user
+                _accessToken.value = user.accessToken
+            } catch (e: Exception) {
+                _signInError.value = e.localizedMessage ?: "카카오 로그인에 실패했습니다."
+            } finally {
+                _loading.value = false
+            }
         }
     }
 }

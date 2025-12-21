@@ -6,9 +6,10 @@ import com.umc.myapplication.data.models.request.SignUpRequest
 import com.umc.myapplication.domain.auth.AuthRepository
 import com.umc.myapplication.domain.model.User
 import kotlinx.coroutines.suspendCancellableCoroutine
+import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class FirebaseAuthRepository(
+class FirebaseAuthRepository @Inject constructor(
     private val auth: FirebaseAuth
 ) : AuthRepository {
 
