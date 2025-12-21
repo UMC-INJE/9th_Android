@@ -97,7 +97,6 @@ class SignInFragment : Fragment() {
                 onClick = {
                     //viewModel값 로그인 통신 넘기기
                     viewModel.signIn()
-                    navController.navigate(R.id.action_PassWordFragment_to_EmptyFragment)
                 }
             ),
             R.id.EmptyFragment to AuthScreenUiConfig(
