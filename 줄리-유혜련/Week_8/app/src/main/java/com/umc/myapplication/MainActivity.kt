@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -81,6 +82,7 @@ class MainActivity : AppCompatActivity() {
             binding.mainBnv.selectedItemId = R.id.homeFragment
         }
 
+        Log.d("MAIN/JWT_TO_SERVER", getJwt().toString())
     }
 
     override fun onStart() {
@@ -95,6 +97,11 @@ class MainActivity : AppCompatActivity() {
         } else{
             songDB.songDao().getSong(songId)
         }
+    }
+
+    private fun getJwt(): String? {
+        val spf = this.getSharedPreferences("auth2", AppCompatActivity.MODE_PRIVATE)
+        return spf.getString("jwt", null)
     }
 
     private fun initBottomNavigation(){
